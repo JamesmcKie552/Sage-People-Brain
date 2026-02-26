@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sage People Brain</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f5f5;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: #1a1a1a;
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .logo-dot {
+      width: 32px; height: 32px;
+      background: #00dc84;
+      border-radius: 50%;
+    }
+    header h1 {
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+    header span {
+      color: #00dc84;
+    }
+
+    /* ── Search panel ── */
+    .search-panel {
+      background: #fff;
+      border-bottom: 1px solid #e5e5e5;
+      padding: 24px 32px;
+    }
+    .search-row {
+      display: flex;
+      gap: 12px;
+      max-width: 900px;
+    }
+    .search-row input[type="text"] {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 1rem;
+      border: 2px solid #e5e5e5;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .search-row input[type="text"]:focus {
+      border-color: #00dc84;
+    }
+    .search-row button {
+      padding: 12px 28px;
+      background: #00dc84;
+      color: #1a1a1a;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .search-row button:hover { background: #00c275; }
+
+    .filters {
+      display: flex;
+      gap: 12px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+      max-width: 900px;
+    }
+    .filters select {
+      padding: 8px 12px;
+      border: 1px solid #e5e5e5;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      background: #fff;
+      cursor: pointer;
+    }
+    .filters label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.875rem;
+      color: #666;
+    }
+
+    /* ── Results ── */
+    .results-area {
+      max-width: 964px;
+      margin: 28px auto;
+      padding: 0 32px;
+    }
+    .results-count {
+      font-size: 0.875rem;
+      color: #666;
+      margin-bottom: 16px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      transition: box-shadow 0.15s;
+    }
+    .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 0.975rem;
+      color: #1a1a1a;
+    }
+    .score-badge {
+      background: #f0fdf8;
+      color: #00a060;
+      border: 1px solid #b3f0d8;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .tag {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
+    .tag-type     { background: #eff6ff; color: #1d4ed8; }
+    .tag-segment  { background: #fdf4ff; color: #7e22ce; }
+    .tag-persona  { background: #fff7ed; color: #c2410c; }
+
+    .pain-points {
+      margin-bottom: 14px;
+    }
+    .pain-points h4 {
+      font-size: 0.78rem;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .pain-points ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .pain-points li {
+      background: #f9fafb;
+      border: 1px solid #e5e5e5;
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 0.8rem;
+      color: #444;
+    }
+
+    .card-text {
+      font-size: 0.875rem;
+      line-height: 1.65;
+      color: #333;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 14px;
+    }
+    .card-text p { margin-bottom: 0.6em; }
+    .card-text p:last-child { margin-bottom: 0; }
+
+    /* ── States ── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .empty-state p { font-size: 0.95rem; }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+    .spinner {
+      width: 32px; height: 32px;
+      border: 3px solid #e5e5e5;
+      border-top-color: #00dc84;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg {
+      background: #fff5f5;
+      border: 1px solid #fca5a5;
+      border-radius: 8px;
+      padding: 14px 18px;
+      color: #dc2626;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-dot"></div>
+  <h1>Sage People <span>Brain</span></h1>
+</header>
+
+<div class="search-panel">
+  <div class="search-row">
+    <input type="text" id="queryInput" placeholder="e.g. CHRO pain points in enterprise HR transformation" />
+    <button onclick="doSearch()">Search</button>
+  </div>
+  <div class="filters">
+    <label>
+      Doc type
+      <select id="filterType">
+        <option value="">All types</option>
+        <option value="case_study">Case Study</option>
+        <option value="competitor">Competitor Analysis</option>
+        <option value="icp_persona">ICP &amp; Personas</option>
+        <option value="market_context">Market Context</option>
+        <option value="messaging">Messaging</option>
+        <option value="product">Product</option>
+        <option value="report">Report</option>
+      </select>
+    </label>
+    <label>
+      Segment
+      <select id="filterSegment">
+        <option value="">All segments</option>
+        <option value="enterprise">Enterprise</option>
+        <option value="mid_market">Mid-market</option>
+      </select>
+    </label>
+    <label>
+      Results
+      <select id="filterTopK">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+      </select>
+    </label>
+  </div>
+</div>
+
+<div class="results-area" id="resultsArea">
+  <div class="empty-state">
+    <div class="icon">🧠</div>
+    <p>Search your Sage People knowledge base above.</p>
+  </div>
+</div>
+
+<script>
+  // Allow pressing Enter in the search box
+  document.getElementById("queryInput").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") doSearch();
+  });
+
+  function formatDocType(t) {
+    const map = {
+      case_study: "Case Study", competitor: "Competitor Analysis",
+      icp_persona: "ICP & Personas", market_context: "Market Context",
+      messaging: "Messaging", product: "Product", report: "Report"
+    };
+    return map[t] || t;
+  }
+
+  function formatSegment(s) {
+    return s === "mid_market" ? "Mid-market" : s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  function doSearch() {
+    const query   = document.getElementById("queryInput").value.trim();
+    const docType = document.getElementById("filterType").value;
+    const segment = document.getElementById("filterSegment").value;
+    const topK    = parseInt(document.getElementById("filterTopK").value);
+    const area    = document.getElementById("resultsArea");
+
+    if (!query) return;
+
+    area.innerHTML = `<div class="loading"><div class="spinner"></div>Searching...</div>`;
+
+    fetch("/api/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, doc_type: docType || null, segment: segment || null, top_k: topK })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) {
+        area.innerHTML = `<div class="error-msg">Error: ${data.error}</div>`;
+        return;
+      }
+      const results = data.results;
+      if (!results.length) {
+        area.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><p>No results found. Try a different query or remove filters.</p></div>`;
+        return;
+      }
+
+      let html = `<p class="results-count">${results.length} result${results.length !== 1 ? "s" : ""} for "<strong>${query}</strong>"</p>`;
+
+      results.forEach(r => {
+        const painHtml = r.pain_points.length
+          ? `<div class="pain-points"><h4>Pain Points</h4><ul>${r.pain_points.map(p => `<li>${p}</li>`).join("")}</ul></div>`
+          : "";
+
+        html += `
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">${r.file_name}</div>
+              <div class="score-badge">Score ${r.score}</div>
+            </div>
+            <div class="card-tags">
+              <span class="tag tag-type">${formatDocType(r.doc_type)}</span>
+              ${r.segment ? `<span class="tag tag-segment">${formatSegment(r.segment)}</span>` : ""}
+              ${r.persona ? `<span class="tag tag-persona">${r.persona}</span>` : ""}
+            </div>
+            ${painHtml}
+            <div class="card-text">${r.text.split(/\n\n+/).map(p => `<p>${p.trim()}</p>`).join("")}</div>
+          </div>`;
+      });
+
+      area.innerHTML = html;
+    })
+    .catch(() => {
+      area.innerHTML = `<div class="error-msg">Something went wrong. Is the server running?</div>`;
+    });
+  }
+</script>
+
+</body>
+</html>

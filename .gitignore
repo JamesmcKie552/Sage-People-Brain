@@ -1,0 +1,16 @@
+# API keys — never commit this
+.env
+
+# PDFs and documents — too large for git, keep locally
+docs/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+
+# macOS
+.DS_Store
