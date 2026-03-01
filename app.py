@@ -170,23 +170,34 @@ def _run_battlecard(job_id: str, competitor: str, persona: str = ""):
                 (m.metadata or {}).get("text", "") for m in chunks
             )
 
+        # Use persona text in queries so results are weighted towards relevant content
+        persona_q = persona if persona else "sales rep"
+
         competitor_chunks = vs.search(
-            query_embedding=get_embedding(f"{competitor} competitor HR HCM payroll software"),
-            top_k=4,
+            query_embedding=get_embedding(f"{competitor} competitor HR HCM payroll strengths weaknesses positioning"),
+            top_k=5,
             filter={"doc_type": {"$eq": "competitor"}},
         )
+        # Persona-aware messaging query — pulls the messaging most relevant to this stakeholder
         messaging_chunks = vs.search(
-            query_embedding=get_embedding("Sage People value proposition differentiators why choose us"),
-            top_k=3,
+            query_embedding=get_embedding(f"Sage People {persona_q} value proposition differentiators messaging why choose"),
+            top_k=5,
             filter={"doc_type": {"$eq": "messaging"}},
         )
+        # Persona-aware case study query — surfaces proof points relevant to this role
         case_study_chunks = vs.search(
-            query_embedding=get_embedding("customer win case study proof point success story outcome"),
-            top_k=3,
+            query_embedding=get_embedding(f"customer case study {persona_q} outcome ROI success proof point {competitor}"),
+            top_k=5,
             filter={"doc_type": {"$eq": "case_study"}},
         )
+        # Pull ICP/persona docs — these are almost never used currently
+        icp_chunks = vs.search(
+            query_embedding=get_embedding(f"{persona_q} buyer persona ICP priorities pain points decision criteria"),
+            top_k=3,
+            filter={"doc_type": {"$eq": "icp_persona"}},
+        )
 
-        all_chunks = list(competitor_chunks) + list(messaging_chunks) + list(case_study_chunks)
+        all_chunks = list(competitor_chunks) + list(messaging_chunks) + list(case_study_chunks) + list(icp_chunks)
         source_files = sorted({
             (m.metadata or {}).get("file_name", "")
             for m in all_chunks
@@ -195,6 +206,7 @@ def _run_battlecard(job_id: str, competitor: str, persona: str = ""):
         competitor_context = chunks_to_text(competitor_chunks)
         messaging_context  = chunks_to_text(messaging_chunks)
         case_study_context = chunks_to_text(case_study_chunks)
+        icp_context        = chunks_to_text(icp_chunks)
         print(f"[battlecard:{job_id}] Step 2 done — {len(all_chunks)} chunks")
 
         # ── Step 3: Generate battle card ───────────────────────────────────────
@@ -218,11 +230,14 @@ Language guide by persona type:
 
 Build a concise, honest battle card for competing against {competitor}. Every bullet must be one sentence, punchy, and actionable.
 
-=== EXTERNAL REVIEW SENTIMENT (G2 / TrustRadius) ===
+=== EXTERNAL REVIEW SENTIMENT (G2 / TrustRadius / Capterra) ===
 {sentiment_text}
 
 === COMPETITOR INTELLIGENCE (Knowledge Base) ===
 {competitor_context}
+
+=== BUYER PERSONA INTELLIGENCE (Knowledge Base) ===
+{icp_context}
 
 === SAGE PEOPLE MESSAGING & DIFFERENTIATORS (Knowledge Base) ===
 {messaging_context}
