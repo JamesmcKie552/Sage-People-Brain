@@ -673,7 +673,7 @@
 
     if (!competitor) return;
 
-    area.innerHTML = `<div class="loading"><div class="spinner"></div>Generating battle card for <strong>${competitor}</strong>…<br><small style="color:#999;margin-top:8px;display:block">Searching G2 &amp; TrustRadius + knowledge base + Claude — allow up to 45 seconds</small></div>`;
+    area.innerHTML = `<div class="loading"><div class="spinner"></div>Generating battle card for <strong>${competitor}</strong>…<br><small style="color:#999;margin-top:8px;display:block">Step 1: Fetching G2 &amp; TrustRadius reviews → Step 2: Knowledge base → Step 3: Claude. Allow 2–3 minutes.</small></div>`;
 
     fetch("/api/battlecard", {
       method: "POST",
@@ -716,32 +716,12 @@
           </div>
         </div>`;
 
-      // Competitive segments
-      const segsHtml = (card.competitive_segments || []).map(seg => `
-        <div class="bc-section" style="border-right:1px solid #f0f0f0">
-          <h3 style="color:#6b7280">${seg.segment}</h3>
-          <p style="font-size:0.85rem;color:#333;line-height:1.5">${seg.positioning}</p>
-        </div>`).join("");
-
       // Objections
       const objHtml = (card.objections || []).map(o => `
         <div class="objection-item">
           <div class="objection-q">${o.objection}</div>
           <div class="objection-a">${o.response}</div>
         </div>`).join("");
-
-      // Persona mapping table
-      const personaRows = (card.persona_mapping || []).map(p => `
-        <tr>
-          <td>${p.persona}</td>
-          <td>${p.cares_about}</td>
-          <td>${p.lead_with}</td>
-        </tr>`).join("");
-      const personaHtml = personaRows ? `
-        <table class="persona-table">
-          <thead><tr><th>Persona</th><th>Cares About</th><th>Lead With</th></tr></thead>
-          <tbody>${personaRows}</tbody>
-        </table>` : "";
 
       // Proof points (structured objects)
       const proofHtml = (card.proof_points || []).map(p => {
@@ -781,8 +761,6 @@
 
           ${sentimentHtml}
 
-          ${segsHtml ? `<div class="bc-grid">${segsHtml}</div>` : ""}
-
           <div class="bc-grid">
             <div class="bc-section danger">
               <h3>Why They Win (Their Strengths)</h3>
@@ -810,19 +788,8 @@
 
           <div class="bc-grid">
             <div class="bc-section purple full-width">
-              <h3>Buyer Persona Mapping</h3>
-              ${personaHtml}
-            </div>
-          </div>
-
-          <div class="bc-grid">
-            <div class="bc-section purple">
               <h3>Trap-Setting Questions</h3>
               <ul>${li(card.trap_questions)}</ul>
-            </div>
-            <div class="bc-section amber">
-              <h3>Landmines to Plant Early</h3>
-              <ul>${li(card.landmines)}</ul>
             </div>
           </div>
 

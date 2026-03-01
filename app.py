@@ -172,10 +172,10 @@ def battlecard():
     messaging_context  = chunks_to_text(messaging_chunks)
     case_study_context = chunks_to_text(case_study_chunks)
 
-    # ── Step 3: Generate full battle card ─────────────────────────────────────
+    # ── Step 3: Generate battle card ──────────────────────────────────────────
     prompt = f"""You are a senior GTM strategist at Sage People, a cloud-native HR & HCM platform for 200–5,000 employee organisations.
 
-Build a comprehensive, honest battle card for competing against {competitor}. Sales reps need to scan this fast — keep bullets short (1-2 sentences max).
+Build a concise, honest battle card for competing against {competitor}. Sales reps scan this on their phone before a call — every bullet must be one sentence, punchy, and actionable.
 
 === EXTERNAL REVIEW SENTIMENT (G2 / TrustRadius) ===
 {sentiment_text}
@@ -197,59 +197,45 @@ Return ONLY a valid JSON object — no markdown, no extra text — matching this
   "sources_used": {json.dumps(source_files)},
   "sentiment_summary": {{
     "source": "G2 and TrustRadius",
-    "what_users_love": ["3-5 recurring positive themes from reviews — cite [G2] or [TrustRadius]"],
-    "what_users_complain_about": ["3-5 recurring negative themes — cite source"],
-    "segment_patterns": "One paragraph: do enterprise vs mid-market reviewers say different things?",
-    "recent_trend": "One sentence on whether sentiment has improved or declined recently"
+    "what_users_love": ["3 recurring positives — one sentence each, cite [G2] or [TrustRadius]"],
+    "what_users_complain_about": ["3 recurring complaints — one sentence each, cite source"],
+    "segment_patterns": "One sentence: how do enterprise vs mid-market reviewers differ?",
+    "recent_trend": "One sentence on recent sentiment direction."
   }},
-  "competitive_segments": [
-    {{"segment": "Enterprise (1000+ employees)", "positioning": "How {competitor} positions here and where the deal typically goes"}},
-    {{"segment": "Mid-market (200-999 employees)", "positioning": "How {competitor} positions here and where the deal typically goes"}}
-  ],
   "why_they_win": [
-    "3-5 honest bullets — what {competitor} genuinely does well. Include what real users praise per G2/TrustRadius. End each bullet with [G2], [TrustRadius], or [Knowledge Base]."
+    "3 bullets — what {competitor} genuinely does well. One sentence each. End with [G2], [TrustRadius], or [Knowledge Base]."
   ],
   "where_we_lose": [
-    "2-3 honest bullets: situations or requirements where {competitor} is genuinely a better fit. Being candid here builds trust with the sales team and helps them qualify out early."
+    "2 bullets — situations where {competitor} is the better fit. One sentence each. Be candid."
   ],
   "our_differentiators": [
-    "5-6 bullets — why Sage People wins. Ground every point in specific evidence: customer names, data points, outcomes. No generic claims. Cite source at the end of each bullet."
+    "4 bullets — why Sage People wins. One sentence each with a specific customer name or data point. End with [Knowledge Base]."
   ],
   "objections": [
-    {{"objection": "Exact quote of a common objection reps hear", "response": "Sharp counter that references real customer examples or data. Must directly address what users love about {competitor} per reviews."}},
-    {{"objection": "...", "response": "..."}},
+    {{"objection": "Short verbatim objection reps hear", "response": "One-sentence counter with a real customer example or stat."}},
     {{"objection": "...", "response": "..."}},
     {{"objection": "...", "response": "..."}}
   ],
-  "persona_mapping": [
-    {{"persona": "CHRO", "cares_about": "Their 1-2 top priorities", "lead_with": "The 1-2 Sage People differentiators most relevant to them"}},
-    {{"persona": "CFO", "cares_about": "...", "lead_with": "..."}},
-    {{"persona": "IT Director", "cares_about": "...", "lead_with": "..."}},
-    {{"persona": "HR Director", "cares_about": "...", "lead_with": "..."}}
-  ],
   "trap_questions": [
-    "5-6 open-ended discovery questions starting with 'How do you...' or 'What happens when...'. Use recurring complaint themes from reviews to surface {competitor}'s weaknesses naturally."
-  ],
-  "landmines": [
-    "3-4 landmines — exact suggested language an SDR or SC can say verbatim. Frame as 'One thing worth exploring early is...' or similar. These should create doubt about {competitor} that surfaces later."
+    "4 discovery questions starting with 'How do you...' or 'What happens when...'. Target {competitor}'s known weak spots from reviews."
   ],
   "proof_points": [
-    {{"customer": "Customer name", "size": "Employee count or segment", "displaced": "What they replaced", "outcome": "Key measurable result"}}
+    {{"customer": "Name", "size": "Headcount / segment", "displaced": "What they replaced", "outcome": "One measurable result"}}
   ]
 }}
 
 RULES:
-- Be honest in why_they_win and where_we_lose. A one-sided battle card isn't trusted by the team.
-- Only include claims grounded in the knowledge base OR G2/TrustRadius. No invented facts.
-- Use real customer names and specific data points wherever the knowledge base supports it.
-- Language should be direct and conversational — internal use, not marketing copy.
+- One sentence per bullet. No exceptions.
+- Be honest in why_they_win and where_we_lose — a one-sided card loses credibility.
+- Only use claims grounded in the knowledge base or G2/TrustRadius. No invented facts.
+- Direct, conversational language — internal use, not marketing copy.
 - Always tag the source [Knowledge Base], [G2], or [TrustRadius] at the end of each bullet."""
 
     print("[battlecard] Step 3: generating battle card with Claude...")
     try:
         message = claude_client.messages.create(
             model="claude-sonnet-4-6",
-            max_tokens=8000,
+            max_tokens=4000,
             messages=[{"role": "user", "content": prompt}],
         )
     except anthropic.RateLimitError as e:
