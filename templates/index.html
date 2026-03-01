@@ -849,6 +849,13 @@
       fetch(`/api/battlecard/status/${jobId}`)
         .then(r => r.json())
         .then(job => {
+          // Job not found — server likely restarted mid-generation
+          if (job.error && !job.status) {
+            clearInterval(interval);
+            btn.disabled = false; btn.textContent = 'Generate Battle Card';
+            area.innerHTML = `<div class="error-msg"><strong>Generation was interrupted</strong> — the server restarted while your battle card was being generated. Please try again.</div>`;
+            return;
+          }
           if (job.status === 'running') {
             const el = document.getElementById('bcStatus');
             if (el) el.textContent = job.step || 'Working…';
