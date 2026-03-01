@@ -184,12 +184,29 @@ def _run_battlecard(job_id: str, competitor: str, persona: str = ""):
             top_k=5,
             filter={"doc_type": {"$eq": "messaging"}},
         )
-        # Persona-aware case study query — surfaces proof points relevant to this role
-        case_study_chunks = vs.search(
-            query_embedding=get_embedding(f"customer case study {persona_q} outcome ROI success proof point {competitor}"),
+        # Multi-query case study retrieval — 3 differently-worded queries to surface varied proof points
+        _cs_q1 = vs.search(
+            query_embedding=get_embedding(f"customer case study {persona_q} outcome ROI success proof point"),
             top_k=5,
             filter={"doc_type": {"$eq": "case_study"}},
         )
+        _cs_q2 = vs.search(
+            query_embedding=get_embedding(f"replaced switched from {competitor} Sage People HR transformation"),
+            top_k=5,
+            filter={"doc_type": {"$eq": "case_study"}},
+        )
+        _cs_q3 = vs.search(
+            query_embedding=get_embedding(f"Sage People customer win efficiency headcount growth people strategy"),
+            top_k=5,
+            filter={"doc_type": {"$eq": "case_study"}},
+        )
+        # Deduplicate by chunk ID, preserving order (highest-scoring chunks first)
+        _seen_ids: set = set()
+        case_study_chunks = []
+        for _chunk in list(_cs_q1) + list(_cs_q2) + list(_cs_q3):
+            if _chunk.id not in _seen_ids:
+                _seen_ids.add(_chunk.id)
+                case_study_chunks.append(_chunk)
         # Pull ICP/persona docs — these are almost never used currently
         icp_chunks = vs.search(
             query_embedding=get_embedding(f"{persona_q} buyer persona ICP priorities pain points decision criteria"),
