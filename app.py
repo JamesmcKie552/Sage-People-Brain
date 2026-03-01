@@ -6,6 +6,9 @@ Deployed on:  Render (see render.yaml)
 """
 
 import os
+import json
+import anthropic
+from datetime import date
 from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -15,7 +18,14 @@ import vector_store as vs
 load_dotenv()
 
 app = Flask(__name__)
+
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    import traceback
+    return jsonify({"error": str(e), "traceback": traceback.format_exc()}), 500
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+claude_client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 
 def get_embedding(text: str) -> list[float]:
@@ -70,6 +80,203 @@ def search():
         })
 
     return jsonify({"results": results})
+
+
+@app.route("/api/battlecard", methods=["POST"])
+def battlecard():
+    data = request.get_json()
+    competitor = data.get("competitor", "").strip()
+
+    if not competitor:
+        return jsonify({"error": "No competitor provided"}), 400
+
+    today = date.today().strftime("%B %d, %Y")
+
+    # ── Step 1: Web sentiment enrichment (G2 / TrustRadius) ───────────────────
+    print(f"[battlecard] Starting: competitor={competitor!r}")
+    sentiment_text = ""
+    try:
+        print("[battlecard] Step 1: web search...")
+        sentiment_msg = claude_client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=800,
+            tools=[{
+                "type": "web_search_20250305",
+                "name": "web_search",
+                "max_uses": 1,
+            }],
+            messages=[{
+                "role": "user",
+                "content": (
+                    f"Search G2 and TrustRadius for user reviews of {competitor} specifically "
+                    f"as an HR, HCM, or payroll software product. Only use reviews that relate to "
+                    f"HR, payroll, workforce management, or people management use cases — ignore any "
+                    f"reviews about other product lines this vendor may have.\n\n"
+                    f"Extract and summarise:\n"
+                    f"1. Top 3-5 things HR/payroll users love about {competitor} (recurring positive themes)\n"
+                    f"2. Top 3-5 things HR/payroll users complain about (recurring negative themes)\n"
+                    f"3. Segment patterns: Do enterprise HR teams say different things than mid-market HR teams?\n"
+                    f"4. Recent trend: Has sentiment shifted in the last 12 months?\n\n"
+                    f"Be specific to the HR/payroll context. Cite G2 or TrustRadius as the source for each point. "
+                    f"Do not include sentiment from reviews about unrelated product areas."
+                ),
+            }],
+        )
+        # Extract only TextBlocks — web search also returns ServerToolUseBlock etc.
+        sentiment_text = "\n\n".join(
+            block.text for block in sentiment_msg.content
+            if hasattr(block, "text") and block.text.strip()
+        )
+    except Exception as e:
+        print(f"[battlecard] Step 1 FAILED: {e}")
+        sentiment_text = f"[Web search unavailable: {e}]"
+    else:
+        print("[battlecard] Step 1 done")
+
+    # ── Step 2: Pull Pinecone context ─────────────────────────────────────────
+    def chunks_to_text(chunks):
+        return "\n\n---\n\n".join(
+            (m.metadata or {}).get("text", "") for m in chunks
+        )
+
+    print("[battlecard] Step 2: Pinecone queries...")
+    try:
+        competitor_chunks = vs.search(
+            query_embedding=get_embedding(f"{competitor} competitor HR HCM payroll software"),
+            top_k=4,
+            filter={"doc_type": {"$eq": "competitor"}},
+        )
+        messaging_chunks = vs.search(
+            query_embedding=get_embedding("Sage People value proposition differentiators why choose us"),
+            top_k=3,
+            filter={"doc_type": {"$eq": "messaging"}},
+        )
+        case_study_chunks = vs.search(
+            query_embedding=get_embedding("customer win case study proof point success story outcome"),
+            top_k=3,
+            filter={"doc_type": {"$eq": "case_study"}},
+        )
+    except Exception as e:
+        print(f"[battlecard] Step 2 FAILED: {e}")
+        return jsonify({"error": f"Pinecone search failed: {e}"}), 500
+
+    print(f"[battlecard] Step 2 done — {len(list(competitor_chunks))+len(list(messaging_chunks))+len(list(case_study_chunks))} chunks")
+    all_chunks = list(competitor_chunks) + list(messaging_chunks) + list(case_study_chunks)
+    source_files = sorted({
+        (m.metadata or {}).get("file_name", "")
+        for m in all_chunks
+        if (m.metadata or {}).get("file_name")
+    })
+
+    competitor_context = chunks_to_text(competitor_chunks)
+    messaging_context  = chunks_to_text(messaging_chunks)
+    case_study_context = chunks_to_text(case_study_chunks)
+
+    # ── Step 3: Generate full battle card ─────────────────────────────────────
+    prompt = f"""You are a senior GTM strategist at Sage People, a cloud-native HR & HCM platform for 200–5,000 employee organisations.
+
+Build a comprehensive, honest battle card for competing against {competitor}. Sales reps need to scan this fast — keep bullets short (1-2 sentences max).
+
+=== EXTERNAL REVIEW SENTIMENT (G2 / TrustRadius) ===
+{sentiment_text}
+
+=== COMPETITOR INTELLIGENCE (Knowledge Base) ===
+{competitor_context}
+
+=== SAGE PEOPLE MESSAGING & DIFFERENTIATORS (Knowledge Base) ===
+{messaging_context}
+
+=== CUSTOMER PROOF POINTS (Knowledge Base) ===
+{case_study_context}
+
+Return ONLY a valid JSON object — no markdown, no extra text — matching this exact structure:
+{{
+  "competitor": "{competitor}",
+  "segment": "Enterprise / Mid-market / Both",
+  "generated_date": "{today}",
+  "sources_used": {json.dumps(source_files)},
+  "sentiment_summary": {{
+    "source": "G2 and TrustRadius",
+    "what_users_love": ["3-5 recurring positive themes from reviews — cite [G2] or [TrustRadius]"],
+    "what_users_complain_about": ["3-5 recurring negative themes — cite source"],
+    "segment_patterns": "One paragraph: do enterprise vs mid-market reviewers say different things?",
+    "recent_trend": "One sentence on whether sentiment has improved or declined recently"
+  }},
+  "competitive_segments": [
+    {{"segment": "Enterprise (1000+ employees)", "positioning": "How {competitor} positions here and where the deal typically goes"}},
+    {{"segment": "Mid-market (200-999 employees)", "positioning": "How {competitor} positions here and where the deal typically goes"}}
+  ],
+  "why_they_win": [
+    "3-5 honest bullets — what {competitor} genuinely does well. Include what real users praise per G2/TrustRadius. End each bullet with [G2], [TrustRadius], or [Knowledge Base]."
+  ],
+  "where_we_lose": [
+    "2-3 honest bullets: situations or requirements where {competitor} is genuinely a better fit. Being candid here builds trust with the sales team and helps them qualify out early."
+  ],
+  "our_differentiators": [
+    "5-6 bullets — why Sage People wins. Ground every point in specific evidence: customer names, data points, outcomes. No generic claims. Cite source at the end of each bullet."
+  ],
+  "objections": [
+    {{"objection": "Exact quote of a common objection reps hear", "response": "Sharp counter that references real customer examples or data. Must directly address what users love about {competitor} per reviews."}},
+    {{"objection": "...", "response": "..."}},
+    {{"objection": "...", "response": "..."}},
+    {{"objection": "...", "response": "..."}}
+  ],
+  "persona_mapping": [
+    {{"persona": "CHRO", "cares_about": "Their 1-2 top priorities", "lead_with": "The 1-2 Sage People differentiators most relevant to them"}},
+    {{"persona": "CFO", "cares_about": "...", "lead_with": "..."}},
+    {{"persona": "IT Director", "cares_about": "...", "lead_with": "..."}},
+    {{"persona": "HR Director", "cares_about": "...", "lead_with": "..."}}
+  ],
+  "trap_questions": [
+    "5-6 open-ended discovery questions starting with 'How do you...' or 'What happens when...'. Use recurring complaint themes from reviews to surface {competitor}'s weaknesses naturally."
+  ],
+  "landmines": [
+    "3-4 landmines — exact suggested language an SDR or SC can say verbatim. Frame as 'One thing worth exploring early is...' or similar. These should create doubt about {competitor} that surfaces later."
+  ],
+  "proof_points": [
+    {{"customer": "Customer name", "size": "Employee count or segment", "displaced": "What they replaced", "outcome": "Key measurable result"}}
+  ]
+}}
+
+RULES:
+- Be honest in why_they_win and where_we_lose. A one-sided battle card isn't trusted by the team.
+- Only include claims grounded in the knowledge base OR G2/TrustRadius. No invented facts.
+- Use real customer names and specific data points wherever the knowledge base supports it.
+- Language should be direct and conversational — internal use, not marketing copy.
+- Always tag the source [Knowledge Base], [G2], or [TrustRadius] at the end of each bullet."""
+
+    print("[battlecard] Step 3: generating battle card with Claude...")
+    try:
+        message = claude_client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=8000,
+            messages=[{"role": "user", "content": prompt}],
+        )
+    except anthropic.RateLimitError as e:
+        print(f"[battlecard] Step 3 RATE LIMITED: {e}")
+        return jsonify({
+            "error": "Rate limit hit — the web search step used up the token allowance for this minute. "
+                     "Wait 60 seconds and try again. If it keeps happening, try a less well-known competitor "
+                     "(smaller vendors have less review content to fetch)."
+        }), 429
+    except Exception as e:
+        print(f"[battlecard] Step 3 FAILED: {e}")
+        return jsonify({"error": f"Claude generation failed: {e}"}), 500
+
+    print("[battlecard] Step 3 done — parsing JSON...")
+    raw = message.content[0].text.strip()
+    if raw.startswith("```"):
+        raw = raw.split("```")[1]
+        if raw.startswith("json"):
+            raw = raw[4:]
+        raw = raw.strip()
+
+    try:
+        card = json.loads(raw)
+    except Exception:
+        return jsonify({"error": "Failed to parse battle card from Claude", "raw": raw}), 500
+
+    return jsonify(card)
 
 
 if __name__ == "__main__":

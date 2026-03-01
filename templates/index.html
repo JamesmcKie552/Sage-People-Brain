@@ -223,6 +223,281 @@
       color: #dc2626;
       font-size: 0.9rem;
     }
+
+    /* ── Tabs ── */
+    .tabs {
+      background: #fff;
+      border-bottom: 1px solid #e5e5e5;
+      padding: 0 32px;
+      display: flex;
+      gap: 0;
+    }
+    .tab-btn {
+      padding: 14px 22px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #666;
+      border: none;
+      border-bottom: 3px solid transparent;
+      background: none;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .tab-btn:hover { color: #1a1a1a; }
+    .tab-btn.active { color: #1a1a1a; border-bottom-color: #00dc84; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Battle Card ── */
+    .bc-panel {
+      max-width: 964px;
+      margin: 28px auto;
+      padding: 0 32px;
+    }
+    .bc-input-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .bc-input-row input[type="text"] {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 1rem;
+      border: 2px solid #e5e5e5;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .bc-input-row input[type="text"]:focus { border-color: #00dc84; }
+    .bc-input-row button {
+      padding: 12px 28px;
+      background: #00dc84;
+      color: #1a1a1a;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .bc-input-row button:hover { background: #00c275; }
+
+    .bc-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .bc-header {
+      background: #1a1a1a;
+      color: #fff;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .bc-header h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .bc-header .vs-badge {
+      background: #00dc84;
+      color: #1a1a1a;
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .bc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .bc-section {
+      padding: 20px 24px;
+      border-bottom: 1px solid #f0f0f0;
+      border-right: 1px solid #f0f0f0;
+    }
+    .bc-section:nth-child(even) { border-right: none; }
+    .bc-section.full-width {
+      grid-column: 1 / -1;
+      border-right: none;
+    }
+    .bc-section:last-child,
+    .bc-section:nth-last-child(2):not(.full-width) { border-bottom: none; }
+    .bc-section h3 {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 12px;
+    }
+    .bc-section.danger h3  { color: #dc2626; }
+    .bc-section.success h3 { color: #00a060; }
+    .bc-section.blue h3    { color: #1d4ed8; }
+    .bc-section.purple h3  { color: #7e22ce; }
+    .bc-section.amber h3   { color: #b45309; }
+
+    .bc-section ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .bc-section ul li {
+      font-size: 0.85rem;
+      color: #333;
+      line-height: 1.5;
+      padding-left: 16px;
+      position: relative;
+    }
+    .bc-section ul li::before {
+      content: "›";
+      position: absolute;
+      left: 0;
+      color: #999;
+      font-weight: 700;
+    }
+
+    .objection-item {
+      background: #f9fafb;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+    .objection-item:last-child { margin-bottom: 0; }
+    .objection-q {
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 6px;
+    }
+    .objection-q::before { content: "❝ "; color: #999; }
+    .objection-a {
+      font-size: 0.83rem;
+      color: #444;
+      line-height: 1.5;
+    }
+    .objection-a::before { content: "↳ "; color: #00a060; font-weight: 700; }
+
+    /* ── Battle Card: meta bar ── */
+    .bc-meta {
+      display: flex;
+      gap: 20px;
+      padding: 10px 24px;
+      background: #f9fafb;
+      border-bottom: 1px solid #e5e5e5;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .bc-meta-item { font-size: 0.78rem; color: #666; }
+    .bc-meta-item strong { color: #1a1a1a; }
+
+    /* ── Sentiment box ── */
+    .bc-sentiment {
+      padding: 20px 24px;
+      background: #f0f9ff;
+      border-bottom: 1px solid #bae6fd;
+    }
+    .bc-sentiment h3 {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #0369a1;
+      margin-bottom: 14px;
+    }
+    .sentiment-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .sentiment-col h4 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #555;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .sentiment-col ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .sentiment-col ul li {
+      font-size: 0.82rem;
+      color: #333;
+      line-height: 1.4;
+      padding-left: 14px;
+      position: relative;
+    }
+    .sentiment-col ul li::before { content: "›"; position: absolute; left: 0; color: #0369a1; font-weight: 700; }
+    .sentiment-footer {
+      grid-column: 1 / -1;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #bae6fd;
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .sentiment-footer p { font-size: 0.82rem; color: #444; line-height: 1.5; }
+    .sentiment-footer p span { font-weight: 700; color: #0369a1; }
+
+    /* ── Persona mapping table ── */
+    .persona-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+    .persona-table th {
+      background: #f9fafb;
+      padding: 8px 12px;
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: #666;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .persona-table td {
+      padding: 10px 12px;
+      vertical-align: top;
+      border-bottom: 1px solid #f0f0f0;
+      color: #333;
+      line-height: 1.5;
+    }
+    .persona-table tr:last-child td { border-bottom: none; }
+    .persona-table td:first-child { font-weight: 700; color: #1a1a1a; white-space: nowrap; }
+
+    /* ── Proof points ── */
+    .proof-item {
+      background: #f9fafb;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+    }
+    .proof-item:last-child { margin-bottom: 0; }
+    .proof-header {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+    .proof-customer { font-weight: 700; font-size: 0.88rem; color: #1a1a1a; }
+    .proof-badge {
+      background: #e0faf0;
+      color: #00a060;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .proof-displaced { font-size: 0.78rem; color: #888; }
+    .proof-outcome { font-size: 0.83rem; color: #333; line-height: 1.5; }
+    .proof-outcome::before { content: "Result: "; font-weight: 700; color: #00a060; }
+
+    /* ── orange section ── */
+    .bc-section.orange h3 { color: #c2410c; }
   </style>
 </head>
 <body>
@@ -232,55 +507,92 @@
   <h1>Sage People <span>Brain</span></h1>
 </header>
 
-<div class="search-panel">
-  <div class="search-row">
-    <input type="text" id="queryInput" placeholder="e.g. CHRO pain points in enterprise HR transformation" />
-    <button onclick="doSearch()">Search</button>
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('search', this)">Knowledge Search</button>
+  <button class="tab-btn" onclick="switchTab('battlecard', this)">Battle Cards</button>
+</div>
+
+<!-- ── Tab: Knowledge Search ── -->
+<div id="tab-search" class="tab-panel active">
+  <div class="search-panel">
+    <div class="search-row">
+      <input type="text" id="queryInput" placeholder="e.g. CHRO pain points in enterprise HR transformation" />
+      <button onclick="doSearch()">Search</button>
+    </div>
+    <div class="filters">
+      <label>
+        Doc type
+        <select id="filterType">
+          <option value="">All types</option>
+          <option value="case_study">Case Study</option>
+          <option value="competitor">Competitor Analysis</option>
+          <option value="icp_persona">ICP &amp; Personas</option>
+          <option value="market_context">Market Context</option>
+          <option value="messaging">Messaging</option>
+          <option value="product">Product</option>
+          <option value="report">Report</option>
+        </select>
+      </label>
+      <label>
+        Segment
+        <select id="filterSegment">
+          <option value="">All segments</option>
+          <option value="enterprise">Enterprise</option>
+          <option value="mid_market">Mid-market</option>
+        </select>
+      </label>
+      <label>
+        Results
+        <select id="filterTopK">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+        </select>
+      </label>
+    </div>
   </div>
-  <div class="filters">
-    <label>
-      Doc type
-      <select id="filterType">
-        <option value="">All types</option>
-        <option value="case_study">Case Study</option>
-        <option value="competitor">Competitor Analysis</option>
-        <option value="icp_persona">ICP &amp; Personas</option>
-        <option value="market_context">Market Context</option>
-        <option value="messaging">Messaging</option>
-        <option value="product">Product</option>
-        <option value="report">Report</option>
-      </select>
-    </label>
-    <label>
-      Segment
-      <select id="filterSegment">
-        <option value="">All segments</option>
-        <option value="enterprise">Enterprise</option>
-        <option value="mid_market">Mid-market</option>
-      </select>
-    </label>
-    <label>
-      Results
-      <select id="filterTopK">
-        <option value="5">5</option>
-        <option value="10">10</option>
-        <option value="20">20</option>
-      </select>
-    </label>
+
+  <div class="results-area" id="resultsArea">
+    <div class="empty-state">
+      <div class="icon">🧠</div>
+      <p>Search your Sage People knowledge base above.</p>
+    </div>
   </div>
 </div>
 
-<div class="results-area" id="resultsArea">
-  <div class="empty-state">
-    <div class="icon">🧠</div>
-    <p>Search your Sage People knowledge base above.</p>
+<!-- ── Tab: Battle Cards ── -->
+<div id="tab-battlecard" class="tab-panel">
+  <div class="bc-panel">
+    <div class="bc-input-row">
+      <input type="text" id="competitorInput" placeholder="e.g. Workday, SAP SuccessFactors, Oracle HCM, Ceridian, ADP" />
+      <button onclick="doBattleCard()">Generate Battle Card</button>
+    </div>
+    <div id="bcArea">
+      <div class="empty-state">
+        <div class="icon">⚔️</div>
+        <p>Enter a competitor name to generate a battle card.</p>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
+  // ── Tab switching ──────────────────────────────────────────
+  function switchTab(name, btn) {
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.getElementById("tab-" + name).classList.add("active");
+    btn.classList.add("active");
+  }
+
   // Allow pressing Enter in the search box
   document.getElementById("queryInput").addEventListener("keydown", function(e) {
     if (e.key === "Enter") doSearch();
+  });
+
+  // Allow pressing Enter in the competitor box
+  document.getElementById("competitorInput").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") doBattleCard();
   });
 
   function formatDocType(t) {
@@ -351,6 +663,181 @@
     })
     .catch(() => {
       area.innerHTML = `<div class="error-msg">Something went wrong. Is the server running?</div>`;
+    });
+  }
+
+  // ── Battle Card ────────────────────────────────────────────
+  function doBattleCard() {
+    const competitor = document.getElementById("competitorInput").value.trim();
+    const area = document.getElementById("bcArea");
+
+    if (!competitor) return;
+
+    area.innerHTML = `<div class="loading"><div class="spinner"></div>Generating battle card for <strong>${competitor}</strong>…<br><small style="color:#999;margin-top:8px;display:block">Searching G2 &amp; TrustRadius + knowledge base + Claude — allow up to 45 seconds</small></div>`;
+
+    fetch("/api/battlecard", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ competitor })
+    })
+    .then(r => r.text().then(text => {
+      try { return JSON.parse(text); }
+      catch (e) { throw new Error(`HTTP ${r.status} — server returned non-JSON:\n${text.slice(0, 600)}`); }
+    }))
+    .then(card => {
+      if (card.error) {
+        const safeErr = card.error.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+        const safeTb  = (card.traceback||card.raw||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+        area.innerHTML = `<div class="error-msg"><strong>Error:</strong> ${safeErr}${safeTb ? `<pre style="margin-top:8px;font-size:0.75rem;overflow:auto;max-height:300px">${safeTb}</pre>` : ""}</div>`;
+        return;
+      }
+
+      // Helpers
+      const li = items => (items || []).map(i => `<li>${i}</li>`).join("");
+
+      // Sentiment section
+      const s = card.sentiment_summary || {};
+      const sentimentHtml = `
+        <div class="bc-sentiment">
+          <h3>Live HR &amp; Payroll Review Sentiment — ${s.source || "G2 &amp; TrustRadius"}</h3>
+          <div class="sentiment-grid">
+            <div class="sentiment-col">
+              <h4>What users love</h4>
+              <ul>${li(s.what_users_love)}</ul>
+            </div>
+            <div class="sentiment-col">
+              <h4>What users complain about</h4>
+              <ul>${li(s.what_users_complain_about)}</ul>
+            </div>
+            <div class="sentiment-footer">
+              ${s.segment_patterns ? `<p><span>Segment patterns:</span> ${s.segment_patterns}</p>` : ""}
+              ${s.recent_trend ? `<p><span>Recent trend:</span> ${s.recent_trend}</p>` : ""}
+            </div>
+          </div>
+        </div>`;
+
+      // Competitive segments
+      const segsHtml = (card.competitive_segments || []).map(seg => `
+        <div class="bc-section" style="border-right:1px solid #f0f0f0">
+          <h3 style="color:#6b7280">${seg.segment}</h3>
+          <p style="font-size:0.85rem;color:#333;line-height:1.5">${seg.positioning}</p>
+        </div>`).join("");
+
+      // Objections
+      const objHtml = (card.objections || []).map(o => `
+        <div class="objection-item">
+          <div class="objection-q">${o.objection}</div>
+          <div class="objection-a">${o.response}</div>
+        </div>`).join("");
+
+      // Persona mapping table
+      const personaRows = (card.persona_mapping || []).map(p => `
+        <tr>
+          <td>${p.persona}</td>
+          <td>${p.cares_about}</td>
+          <td>${p.lead_with}</td>
+        </tr>`).join("");
+      const personaHtml = personaRows ? `
+        <table class="persona-table">
+          <thead><tr><th>Persona</th><th>Cares About</th><th>Lead With</th></tr></thead>
+          <tbody>${personaRows}</tbody>
+        </table>` : "";
+
+      // Proof points (structured objects)
+      const proofHtml = (card.proof_points || []).map(p => {
+        if (typeof p === "string") {
+          return `<div class="proof-item"><div class="proof-outcome">${p}</div></div>`;
+        }
+        return `
+          <div class="proof-item">
+            <div class="proof-header">
+              <span class="proof-customer">${p.customer || ""}</span>
+              ${p.size ? `<span class="proof-badge">${p.size}</span>` : ""}
+              ${p.displaced ? `<span class="proof-displaced">displaced ${p.displaced}</span>` : ""}
+            </div>
+            ${p.outcome ? `<div class="proof-outcome">${p.outcome}</div>` : ""}
+          </div>`;
+      }).join("");
+
+      // Sources pill list
+      const sourcesHtml = (card.sources_used || []).length
+        ? `<span class="bc-meta-item"><strong>KB sources:</strong> ${card.sources_used.join(", ")}</span>`
+        : "";
+
+      area.innerHTML = `
+        <div class="bc-card">
+
+          <div class="bc-header">
+            <h2>Sage People</h2>
+            <span class="vs-badge">vs</span>
+            <h2>${card.competitor}</h2>
+          </div>
+
+          <div class="bc-meta">
+            ${card.segment ? `<span class="bc-meta-item"><strong>Segment:</strong> ${card.segment}</span>` : ""}
+            ${card.generated_date ? `<span class="bc-meta-item"><strong>Generated:</strong> ${card.generated_date}</span>` : ""}
+            ${sourcesHtml}
+          </div>
+
+          ${sentimentHtml}
+
+          ${segsHtml ? `<div class="bc-grid">${segsHtml}</div>` : ""}
+
+          <div class="bc-grid">
+            <div class="bc-section danger">
+              <h3>Why They Win (Their Strengths)</h3>
+              <ul>${li(card.why_they_win)}</ul>
+            </div>
+            <div class="bc-section orange">
+              <h3>Where We Lose</h3>
+              <ul>${li(card.where_we_lose)}</ul>
+            </div>
+          </div>
+
+          <div class="bc-grid">
+            <div class="bc-section success full-width">
+              <h3>Our Differentiators</h3>
+              <ul>${li(card.our_differentiators)}</ul>
+            </div>
+          </div>
+
+          <div class="bc-grid">
+            <div class="bc-section blue full-width">
+              <h3>Objection Handling</h3>
+              ${objHtml}
+            </div>
+          </div>
+
+          <div class="bc-grid">
+            <div class="bc-section purple full-width">
+              <h3>Buyer Persona Mapping</h3>
+              ${personaHtml}
+            </div>
+          </div>
+
+          <div class="bc-grid">
+            <div class="bc-section purple">
+              <h3>Trap-Setting Questions</h3>
+              <ul>${li(card.trap_questions)}</ul>
+            </div>
+            <div class="bc-section amber">
+              <h3>Landmines to Plant Early</h3>
+              <ul>${li(card.landmines)}</ul>
+            </div>
+          </div>
+
+          <div class="bc-grid">
+            <div class="bc-section success full-width" style="border-bottom:none">
+              <h3>Proof Points &amp; Customer Wins</h3>
+              ${proofHtml}
+            </div>
+          </div>
+
+        </div>`;
+    })
+    .catch(err => {
+      const safe = err.message.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+      area.innerHTML = `<div class="error-msg"><strong>Something went wrong.</strong><br><pre style="margin-top:8px;font-size:0.75rem;white-space:pre-wrap;overflow:auto;max-height:300px">${safe}</pre></div>`;
     });
   }
 </script>
