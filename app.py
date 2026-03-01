@@ -7,6 +7,8 @@ Deployed on:  Render (see render.yaml)
 
 import os
 import json
+import uuid
+import threading
 import anthropic
 from datetime import date
 from flask import Flask, render_template, request, jsonify
@@ -14,6 +16,9 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 import vector_store as vs
+
+# In-memory job store: job_id -> {"status": "running"|"done"|"error", ...}
+_jobs = {}
 
 load_dotenv()
 
@@ -84,63 +89,86 @@ def search():
 
 @app.route("/api/battlecard", methods=["POST"])
 def battlecard():
+    """Kick off battle card generation in a background thread and return a job ID immediately."""
     data = request.get_json()
     competitor = data.get("competitor", "").strip()
 
     if not competitor:
         return jsonify({"error": "No competitor provided"}), 400
 
-    today = date.today().strftime("%B %d, %Y")
+    job_id = str(uuid.uuid4())
+    _jobs[job_id] = {"status": "running", "step": "Starting…"}
 
-    # ── Step 1: Web sentiment enrichment (G2 / TrustRadius) ───────────────────
-    print(f"[battlecard] Starting: competitor={competitor!r}")
-    sentiment_text = ""
+    thread = threading.Thread(
+        target=_run_battlecard, args=(job_id, competitor), daemon=True
+    )
+    thread.start()
+
+    return jsonify({"job_id": job_id})
+
+
+@app.route("/api/battlecard/status/<job_id>")
+def battlecard_status(job_id):
+    """Poll this endpoint every few seconds to check job progress."""
+    job = _jobs.get(job_id)
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    return jsonify(job)
+
+
+def _run_battlecard(job_id: str, competitor: str):
+    """Background worker — runs the full battle card pipeline and stores the result in _jobs."""
     try:
-        print("[battlecard] Step 1: web search...")
-        sentiment_msg = claude_client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=800,
-            tools=[{
-                "type": "web_search_20250305",
-                "name": "web_search",
-                "max_uses": 1,
-            }],
-            messages=[{
-                "role": "user",
-                "content": (
-                    f"Search G2 and TrustRadius for user reviews of {competitor} specifically "
-                    f"as an HR, HCM, or payroll software product. Only use reviews that relate to "
-                    f"HR, payroll, workforce management, or people management use cases — ignore any "
-                    f"reviews about other product lines this vendor may have.\n\n"
-                    f"Extract and summarise:\n"
-                    f"1. Top 3-5 things HR/payroll users love about {competitor} (recurring positive themes)\n"
-                    f"2. Top 3-5 things HR/payroll users complain about (recurring negative themes)\n"
-                    f"3. Segment patterns: Do enterprise HR teams say different things than mid-market HR teams?\n"
-                    f"4. Recent trend: Has sentiment shifted in the last 12 months?\n\n"
-                    f"Be specific to the HR/payroll context. Cite G2 or TrustRadius as the source for each point. "
-                    f"Do not include sentiment from reviews about unrelated product areas."
-                ),
-            }],
-        )
-        # Extract only TextBlocks — web search also returns ServerToolUseBlock etc.
-        sentiment_text = "\n\n".join(
-            block.text for block in sentiment_msg.content
-            if hasattr(block, "text") and block.text.strip()
-        )
-    except Exception as e:
-        print(f"[battlecard] Step 1 FAILED: {e}")
-        sentiment_text = f"[Web search unavailable: {e}]"
-    else:
-        print("[battlecard] Step 1 done")
+        today = date.today().strftime("%B %d, %Y")
 
-    # ── Step 2: Pull Pinecone context ─────────────────────────────────────────
-    def chunks_to_text(chunks):
-        return "\n\n---\n\n".join(
-            (m.metadata or {}).get("text", "") for m in chunks
-        )
+        # ── Step 1: Web sentiment enrichment (G2 / TrustRadius) ───────────────
+        _jobs[job_id]["step"] = "Step 1/3 — Fetching G2 & TrustRadius reviews…"
+        print(f"[battlecard:{job_id}] Step 1: web search for {competitor!r}")
+        sentiment_text = ""
+        try:
+            sentiment_msg = claude_client.messages.create(
+                model="claude-haiku-4-5-20251001",
+                max_tokens=800,
+                tools=[{
+                    "type": "web_search_20250305",
+                    "name": "web_search",
+                    "max_uses": 1,
+                }],
+                messages=[{
+                    "role": "user",
+                    "content": (
+                        f"Search G2 and TrustRadius for user reviews of {competitor} specifically "
+                        f"as an HR, HCM, or payroll software product. Only use reviews that relate to "
+                        f"HR, payroll, workforce management, or people management use cases — ignore any "
+                        f"reviews about other product lines this vendor may have.\n\n"
+                        f"Extract and summarise:\n"
+                        f"1. Top 3-5 things HR/payroll users love about {competitor} (recurring positive themes)\n"
+                        f"2. Top 3-5 things HR/payroll users complain about (recurring negative themes)\n"
+                        f"3. Segment patterns: Do enterprise HR teams say different things than mid-market HR teams?\n"
+                        f"4. Recent trend: Has sentiment shifted in the last 12 months?\n\n"
+                        f"Be specific to the HR/payroll context. Cite G2 or TrustRadius as the source for each point. "
+                        f"Do not include sentiment from reviews about unrelated product areas."
+                    ),
+                }],
+            )
+            sentiment_text = "\n\n".join(
+                block.text for block in sentiment_msg.content
+                if hasattr(block, "text") and block.text.strip()
+            )
+            print(f"[battlecard:{job_id}] Step 1 done")
+        except Exception as e:
+            print(f"[battlecard:{job_id}] Step 1 FAILED: {e}")
+            sentiment_text = f"[Web search unavailable: {e}]"
 
-    print("[battlecard] Step 2: Pinecone queries...")
-    try:
+        # ── Step 2: Pull Pinecone context ──────────────────────────────────────
+        _jobs[job_id]["step"] = "Step 2/3 — Searching knowledge base…"
+        print(f"[battlecard:{job_id}] Step 2: Pinecone queries")
+
+        def chunks_to_text(chunks):
+            return "\n\n---\n\n".join(
+                (m.metadata or {}).get("text", "") for m in chunks
+            )
+
         competitor_chunks = vs.search(
             query_embedding=get_embedding(f"{competitor} competitor HR HCM payroll software"),
             top_k=4,
@@ -156,24 +184,23 @@ def battlecard():
             top_k=3,
             filter={"doc_type": {"$eq": "case_study"}},
         )
-    except Exception as e:
-        print(f"[battlecard] Step 2 FAILED: {e}")
-        return jsonify({"error": f"Pinecone search failed: {e}"}), 500
 
-    print(f"[battlecard] Step 2 done — {len(list(competitor_chunks))+len(list(messaging_chunks))+len(list(case_study_chunks))} chunks")
-    all_chunks = list(competitor_chunks) + list(messaging_chunks) + list(case_study_chunks)
-    source_files = sorted({
-        (m.metadata or {}).get("file_name", "")
-        for m in all_chunks
-        if (m.metadata or {}).get("file_name")
-    })
+        all_chunks = list(competitor_chunks) + list(messaging_chunks) + list(case_study_chunks)
+        source_files = sorted({
+            (m.metadata or {}).get("file_name", "")
+            for m in all_chunks
+            if (m.metadata or {}).get("file_name")
+        })
+        competitor_context = chunks_to_text(competitor_chunks)
+        messaging_context  = chunks_to_text(messaging_chunks)
+        case_study_context = chunks_to_text(case_study_chunks)
+        print(f"[battlecard:{job_id}] Step 2 done — {len(all_chunks)} chunks")
 
-    competitor_context = chunks_to_text(competitor_chunks)
-    messaging_context  = chunks_to_text(messaging_chunks)
-    case_study_context = chunks_to_text(case_study_chunks)
+        # ── Step 3: Generate battle card ───────────────────────────────────────
+        _jobs[job_id]["step"] = "Step 3/3 — Generating battle card with Claude…"
+        print(f"[battlecard:{job_id}] Step 3: Claude generation")
 
-    # ── Step 3: Generate battle card ──────────────────────────────────────────
-    prompt = f"""You are a senior GTM strategist at Sage People, a cloud-native HR & HCM platform for 200–5,000 employee organisations.
+        prompt = f"""You are a senior GTM strategist at Sage People, a cloud-native HR & HCM platform for 200–5,000 employee organisations.
 
 Build a concise, honest battle card for competing against {competitor}. Sales reps scan this on their phone before a call — every bullet must be one sentence, punchy, and actionable.
 
@@ -231,38 +258,27 @@ RULES:
 - Direct, conversational language — internal use, not marketing copy.
 - Always tag the source [Knowledge Base], [G2], or [TrustRadius] at the end of each bullet."""
 
-    print("[battlecard] Step 3: generating battle card with Claude...")
-    try:
         message = claude_client.messages.create(
             model="claude-sonnet-4-6",
             max_tokens=4000,
             messages=[{"role": "user", "content": prompt}],
         )
-    except anthropic.RateLimitError as e:
-        print(f"[battlecard] Step 3 RATE LIMITED: {e}")
-        return jsonify({
-            "error": "Rate limit hit — the web search step used up the token allowance for this minute. "
-                     "Wait 60 seconds and try again. If it keeps happening, try a less well-known competitor "
-                     "(smaller vendors have less review content to fetch)."
-        }), 429
-    except Exception as e:
-        print(f"[battlecard] Step 3 FAILED: {e}")
-        return jsonify({"error": f"Claude generation failed: {e}"}), 500
 
-    print("[battlecard] Step 3 done — parsing JSON...")
-    raw = message.content[0].text.strip()
-    if raw.startswith("```"):
-        raw = raw.split("```")[1]
-        if raw.startswith("json"):
-            raw = raw[4:]
-        raw = raw.strip()
+        raw = message.content[0].text.strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+            raw = raw.strip()
 
-    try:
         card = json.loads(raw)
-    except Exception:
-        return jsonify({"error": "Failed to parse battle card from Claude", "raw": raw}), 500
+        print(f"[battlecard:{job_id}] Done")
+        _jobs[job_id] = {"status": "done", "result": card}
 
-    return jsonify(card)
+    except Exception as e:
+        import traceback
+        print(f"[battlecard:{job_id}] FAILED: {e}")
+        _jobs[job_id] = {"status": "error", "error": str(e), "traceback": traceback.format_exc()}
 
 
 if __name__ == "__main__":

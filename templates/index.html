@@ -673,24 +673,50 @@
 
     if (!competitor) return;
 
-    area.innerHTML = `<div class="loading"><div class="spinner"></div>Generating battle card for <strong>${competitor}</strong>…<br><small style="color:#999;margin-top:8px;display:block">Step 1: Fetching G2 &amp; TrustRadius reviews → Step 2: Knowledge base → Step 3: Claude. Allow 2–3 minutes.</small></div>`;
+    area.innerHTML = `<div class="loading"><div class="spinner"></div><span id="bcStatus">Starting…</span></div>`;
 
+    // Step 1: kick off the background job
     fetch("/api/battlecard", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ competitor })
     })
-    .then(r => r.text().then(text => {
-      try { return JSON.parse(text); }
-      catch (e) { throw new Error(`HTTP ${r.status} — server returned non-JSON:\n${text.slice(0, 600)}`); }
-    }))
-    .then(card => {
-      if (card.error) {
-        const safeErr = card.error.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-        const safeTb  = (card.traceback||card.raw||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-        area.innerHTML = `<div class="error-msg"><strong>Error:</strong> ${safeErr}${safeTb ? `<pre style="margin-top:8px;font-size:0.75rem;overflow:auto;max-height:300px">${safeTb}</pre>` : ""}</div>`;
-        return;
-      }
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) throw new Error(data.error);
+      pollBattleCard(data.job_id, area);
+    })
+    .catch(err => {
+      area.innerHTML = `<div class="error-msg"><strong>Failed to start:</strong> ${err.message}</div>`;
+    });
+  }
+
+  function pollBattleCard(jobId, area) {
+    const statusEl = document.getElementById("bcStatus");
+    const interval = setInterval(() => {
+      fetch(`/api/battlecard/status/${jobId}`)
+        .then(r => r.json())
+        .then(job => {
+          if (job.status === "running") {
+            if (statusEl) statusEl.textContent = job.step || "Working…";
+            return; // keep polling
+          }
+          clearInterval(interval);
+          if (job.status === "error") {
+            const safeErr = (job.error||"Unknown error").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+            area.innerHTML = `<div class="error-msg"><strong>Error:</strong> ${safeErr}</div>`;
+            return;
+          }
+          renderBattleCard(job.result, area);
+        })
+        .catch(() => {
+          clearInterval(interval);
+          area.innerHTML = `<div class="error-msg">Lost connection while waiting for results. Please try again.</div>`;
+        });
+    }, 3000);
+  }
+
+  function renderBattleCard(card, area) {
 
       // Helpers
       const li = items => (items || []).map(i => `<li>${i}</li>`).join("");
@@ -801,11 +827,6 @@
           </div>
 
         </div>`;
-    })
-    .catch(err => {
-      const safe = err.message.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-      area.innerHTML = `<div class="error-msg"><strong>Something went wrong.</strong><br><pre style="margin-top:8px;font-size:0.75rem;white-space:pre-wrap;overflow:auto;max-height:300px">${safe}</pre></div>`;
-    });
   }
 </script>
 
