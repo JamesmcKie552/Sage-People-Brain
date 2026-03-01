@@ -4,43 +4,85 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sage People Brain</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* ── Fonts ─────────────────────────────────────────────────────────────── */
+    @font-face { font-family: 'SageHeadline'; src: url('/static/fonts/SageHeadline-Black.ttf'); font-weight: 900; }
+    @font-face { font-family: 'SageText'; src: url('/static/fonts/SageText-Light.ttf'); font-weight: 300; }
+    @font-face { font-family: 'SageText'; src: url('/static/fonts/SageText-Regular.ttf'); font-weight: 400; }
+    @font-face { font-family: 'SageText'; src: url('/static/fonts/SageText-Medium.ttf'); font-weight: 500; }
+    @font-face { font-family: 'SageText'; src: url('/static/fonts/SageText-Bold.ttf'); font-weight: 700; }
+    @font-face { font-family: 'SageText'; src: url('/static/fonts/SageText-RegularItalic.ttf'); font-weight: 400; font-style: italic; }
 
+    /* ── Reset & base ───────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f5f5f5;
-      color: #1a1a1a;
+      font-family: 'SageText', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 400;
+      background: #F5F5F5;
+      color: #000;
       min-height: 100vh;
     }
 
-    /* ── Header ── */
-    header {
-      background: #1a1a1a;
-      padding: 18px 32px;
+    /* ── Top bar ────────────────────────────────────────────────────────────── */
+    .top-bar {
+      background: #000;
+      padding: 14px 32px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
     }
-    .logo-dot {
-      width: 32px; height: 32px;
-      background: #00dc84;
-      border-radius: 50%;
+    .top-bar img.logo {
+      height: 28px;
+      width: auto;
     }
-    header h1 {
+    .top-bar .logo-fallback {
+      font-family: 'SageHeadline', sans-serif;
+      font-weight: 900;
+      font-size: 1.4rem;
+      color: #00D639;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+    .top-bar .app-name {
+      font-family: 'SageText', sans-serif;
+      font-weight: 500;
+      font-size: 0.9rem;
       color: #fff;
-      font-size: 1.2rem;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-    }
-    header span {
-      color: #00dc84;
+      padding-left: 16px;
+      border-left: 1px solid #333;
     }
 
-    /* ── Search panel ── */
+    /* ── Tabs ───────────────────────────────────────────────────────────────── */
+    .tabs {
+      background: #000;
+      border-bottom: 1px solid #222;
+      padding: 0 32px;
+      display: flex;
+    }
+    .tab-btn {
+      padding: 12px 20px;
+      font-family: 'SageText', sans-serif;
+      font-weight: 500;
+      font-size: 0.875rem;
+      color: #888;
+      border: none;
+      border-bottom: 3px solid transparent;
+      background: none;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+      letter-spacing: 0.2px;
+    }
+    .tab-btn:hover { color: #fff; }
+    .tab-btn.active { color: #fff; border-bottom-color: #00D639; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Knowledge Search tab ───────────────────────────────────────────────── */
     .search-panel {
       background: #fff;
-      border-bottom: 1px solid #e5e5e5;
+      border-bottom: 1px solid #E5E5E5;
       padding: 24px 32px;
     }
     .search-row {
@@ -51,28 +93,27 @@
     .search-row input[type="text"] {
       flex: 1;
       padding: 12px 16px;
-      font-size: 1rem;
-      border: 2px solid #e5e5e5;
-      border-radius: 8px;
+      font-family: 'SageText', sans-serif;
+      font-size: 0.95rem;
+      border: 1.5px solid #E5E5E5;
+      border-radius: 6px;
       outline: none;
       transition: border-color 0.15s;
     }
-    .search-row input[type="text"]:focus {
-      border-color: #00dc84;
-    }
+    .search-row input:focus { border-color: #00D639; }
     .search-row button {
       padding: 12px 28px;
-      background: #00dc84;
-      color: #1a1a1a;
-      font-size: 1rem;
-      font-weight: 600;
+      background: #00D639;
+      color: #000;
+      font-family: 'SageText', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
       transition: background 0.15s;
     }
-    .search-row button:hover { background: #00c275; }
-
+    .search-row button:hover { background: #00b830; }
     .filters {
       display: flex;
       gap: 12px;
@@ -82,9 +123,10 @@
     }
     .filters select {
       padding: 8px 12px;
-      border: 1px solid #e5e5e5;
-      border-radius: 6px;
+      font-family: 'SageText', sans-serif;
       font-size: 0.875rem;
+      border: 1px solid #E5E5E5;
+      border-radius: 6px;
       background: #fff;
       cursor: pointer;
     }
@@ -95,424 +137,521 @@
       font-size: 0.875rem;
       color: #666;
     }
-
-    /* ── Results ── */
     .results-area {
       max-width: 964px;
       margin: 28px auto;
       padding: 0 32px;
     }
-    .results-count {
-      font-size: 0.875rem;
-      color: #666;
-      margin-bottom: 16px;
-    }
-
+    .results-count { font-size: 0.875rem; color: #666; margin-bottom: 16px; }
     .card {
       background: #fff;
-      border: 1px solid #e5e5e5;
-      border-radius: 10px;
+      border: 1px solid #E5E5E5;
+      border-radius: 8px;
       padding: 20px 24px;
       margin-bottom: 16px;
-      transition: box-shadow 0.15s;
     }
-    .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 12px;
-    }
-    .card-title {
-      font-weight: 600;
-      font-size: 0.975rem;
-      color: #1a1a1a;
-    }
-    .score-badge {
-      background: #f0fdf8;
-      color: #00a060;
-      border: 1px solid #b3f0d8;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .card-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-    .tag {
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 0.78rem;
-      font-weight: 500;
-    }
-    .tag-type     { background: #eff6ff; color: #1d4ed8; }
-    .tag-segment  { background: #fdf4ff; color: #7e22ce; }
-    .tag-persona  { background: #fff7ed; color: #c2410c; }
-
-    .pain-points {
-      margin-bottom: 14px;
-    }
-    .pain-points h4 {
-      font-size: 0.78rem;
-      color: #666;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
-    }
-    .pain-points ul {
-      list-style: none;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .pain-points li {
-      background: #f9fafb;
-      border: 1px solid #e5e5e5;
-      border-radius: 6px;
-      padding: 3px 10px;
-      font-size: 0.8rem;
-      color: #444;
-    }
-
-    .card-text {
-      font-size: 0.875rem;
-      line-height: 1.65;
-      color: #333;
-      border-top: 1px solid #f0f0f0;
-      padding-top: 14px;
-    }
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .card-title { font-weight: 700; font-size: 0.95rem; }
+    .score-badge { background: #f0fdf8; color: #00875a; border: 1px solid #b3efd4; padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; white-space: nowrap; }
+    .card-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .tag { padding: 3px 10px; border-radius: 20px; font-size: 0.76rem; font-weight: 500; }
+    .tag-type { background: #eff6ff; color: #1d4ed8; }
+    .tag-segment { background: #fdf4ff; color: #7e22ce; }
+    .tag-persona { background: #fff7ed; color: #c2410c; }
+    .pain-points { margin-bottom: 12px; }
+    .pain-points h4 { font-size: 0.74rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .pain-points ul { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+    .pain-points li { background: #F5F5F5; border: 1px solid #E5E5E5; border-radius: 4px; padding: 3px 10px; font-size: 0.78rem; color: #444; }
+    .card-text { font-size: 0.875rem; line-height: 1.65; color: #333; border-top: 1px solid #f0f0f0; padding-top: 14px; }
     .card-text p { margin-bottom: 0.6em; }
     .card-text p:last-child { margin-bottom: 0; }
 
-    /* ── States ── */
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: #999;
-    }
+    /* ── States ─────────────────────────────────────────────────────────────── */
+    .empty-state { text-align: center; padding: 60px 20px; color: #999; }
     .empty-state .icon { font-size: 2.5rem; margin-bottom: 12px; }
     .empty-state p { font-size: 0.95rem; }
-
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: #666;
-    }
+    .loading { text-align: center; padding: 60px 20px; color: #666; }
     .spinner {
-      width: 32px; height: 32px;
-      border: 3px solid #e5e5e5;
-      border-top-color: #00dc84;
+      width: 36px; height: 36px;
+      border: 3px solid #E5E5E5;
+      border-top-color: #00D639;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
-      margin: 0 auto 12px;
+      margin: 0 auto 16px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
+    .loading-step { font-family: 'SageText', sans-serif; font-weight: 500; font-size: 0.95rem; color: #333; margin-bottom: 6px; }
+    .loading-sub { font-size: 0.82rem; color: #888; }
     .error-msg {
       background: #fff5f5;
       border: 1px solid #fca5a5;
       border-radius: 8px;
-      padding: 14px 18px;
+      padding: 16px 20px;
       color: #dc2626;
       font-size: 0.9rem;
     }
 
-    /* ── Tabs ── */
-    .tabs {
-      background: #fff;
-      border-bottom: 1px solid #e5e5e5;
-      padding: 0 32px;
-      display: flex;
-      gap: 0;
-    }
-    .tab-btn {
-      padding: 14px 22px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #666;
-      border: none;
-      border-bottom: 3px solid transparent;
-      background: none;
-      cursor: pointer;
-      transition: color 0.15s, border-color 0.15s;
-    }
-    .tab-btn:hover { color: #1a1a1a; }
-    .tab-btn.active { color: #1a1a1a; border-bottom-color: #00dc84; }
-
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    /* ── Battle Card ── */
-    .bc-panel {
-      max-width: 964px;
-      margin: 28px auto;
-      padding: 0 32px;
-    }
-    .bc-input-row {
+    /* ── Battle Card: Controls bar ──────────────────────────────────────────── */
+    .bc-controls {
+      background: #1A1A1A;
+      padding: 20px 32px;
       display: flex;
       gap: 12px;
-      margin-bottom: 24px;
+      align-items: flex-end;
+      flex-wrap: wrap;
     }
-    .bc-input-row input[type="text"] {
+    .bc-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
       flex: 1;
+      min-width: 200px;
+    }
+    .bc-field label {
+      font-family: 'SageText', sans-serif;
+      font-weight: 500;
+      font-size: 0.75rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .bc-field input[type="text"] {
       padding: 12px 16px;
-      font-size: 1rem;
-      border: 2px solid #e5e5e5;
-      border-radius: 8px;
+      font-family: 'SageText', sans-serif;
+      font-size: 0.95rem;
+      background: #2A2A2A;
+      border: 1.5px solid #333;
+      border-radius: 6px;
+      color: #fff;
       outline: none;
       transition: border-color 0.15s;
     }
-    .bc-input-row input[type="text"]:focus { border-color: #00dc84; }
-    .bc-input-row button {
+    .bc-field input::placeholder { color: #555; }
+    .bc-field input:focus { border-color: #00D639; }
+    .bc-generate-btn {
       padding: 12px 28px;
-      background: #00dc84;
-      color: #1a1a1a;
-      font-size: 1rem;
-      font-weight: 600;
+      background: #00D639;
+      color: #000;
+      font-family: 'SageText', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
       transition: background 0.15s;
+      white-space: nowrap;
+      align-self: flex-end;
+      height: 46px;
     }
-    .bc-input-row button:hover { background: #00c275; }
+    .bc-generate-btn:hover { background: #00b830; }
+    .bc-generate-btn:disabled { background: #555; color: #888; cursor: not-allowed; }
 
-    .bc-card {
+    /* ── Battle Card: Output area ───────────────────────────────────────────── */
+    .bc-output {
+      max-width: 1000px;
+      margin: 32px auto;
+      padding: 0 32px 60px;
+    }
+
+    /* Card title */
+    .bc-title-block {
+      margin-bottom: 24px;
+    }
+    .bc-vs-line {
+      font-family: 'SageHeadline', sans-serif;
+      font-weight: 900;
+      font-size: 1.8rem;
+      color: #000;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+    }
+    .bc-vs-line .green { color: #00D639; }
+    .bc-meta-line {
+      display: flex;
+      gap: 20px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .bc-meta-pill {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #888;
+    }
+    .bc-meta-pill strong { color: #333; }
+
+    /* Section card base */
+    .bc-section-card {
       background: #fff;
-      border: 1px solid #e5e5e5;
-      border-radius: 10px;
+      border: 1px solid #E5E5E5;
+      border-radius: 8px;
+      margin-bottom: 16px;
       overflow: hidden;
     }
-    .bc-header {
-      background: #1a1a1a;
-      color: #fff;
-      padding: 18px 24px;
+    .bc-section-card .section-header {
       display: flex;
       align-items: center;
       gap: 12px;
+      padding: 16px 20px 14px;
+      border-bottom: 1px solid #F0F0F0;
     }
-    .bc-header h2 {
-      font-size: 1.1rem;
-      font-weight: 600;
+    .bc-section-card .section-header::before {
+      content: '';
+      display: block;
+      width: 4px;
+      height: 20px;
+      background: #00D639;
+      border-radius: 2px;
+      flex-shrink: 0;
     }
-    .bc-header .vs-badge {
-      background: #00dc84;
-      color: #1a1a1a;
-      border-radius: 20px;
-      padding: 3px 12px;
-      font-size: 0.8rem;
+    .bc-section-card .section-title {
+      font-family: 'SageText', sans-serif;
+      font-weight: 700;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #000;
+    }
+    .bc-section-card .section-body {
+      padding: 16px 20px;
+    }
+
+    /* Quick wins banner */
+    .quick-wins-banner {
+      background: #1A1A1A;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .quick-wins-banner .qw-title {
+      font-family: 'SageText', sans-serif;
+      font-weight: 700;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #00D639;
+      margin-bottom: 14px;
+    }
+    .quick-wins-banner ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .quick-wins-banner ul li {
+      font-size: 0.9rem;
+      color: #fff;
+      line-height: 1.5;
+      padding-left: 18px;
+      position: relative;
+      font-weight: 500;
+    }
+    .quick-wins-banner ul li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #00D639;
       font-weight: 700;
     }
 
-    .bc-grid {
+    /* Sentiment section */
+    .sentiment-card {
+      background: #F5F5F5;
+      border: 1px solid #E5E5E5;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .sentiment-card .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px 14px;
+      border-bottom: 1px solid #E5E5E5;
+      background: #F5F5F5;
+    }
+    .sentiment-card .section-header::before {
+      content: '';
+      display: block;
+      width: 4px;
+      height: 20px;
+      background: #00D639;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .sentiment-card .section-title {
+      font-family: 'SageText', sans-serif;
+      font-weight: 700;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #000;
+    }
+    .sentiment-source-tag {
+      margin-left: auto;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: #888;
+      background: #fff;
+      border: 1px solid #E5E5E5;
+      border-radius: 20px;
+      padding: 2px 10px;
+    }
+    .sentiment-cols {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0;
     }
-    .bc-section {
-      padding: 20px 24px;
-      border-bottom: 1px solid #f0f0f0;
-      border-right: 1px solid #f0f0f0;
+    .sentiment-col {
+      padding: 16px 20px;
     }
-    .bc-section:nth-child(even) { border-right: none; }
-    .bc-section.full-width {
-      grid-column: 1 / -1;
-      border-right: none;
-    }
-    .bc-section:last-child,
-    .bc-section:nth-last-child(2):not(.full-width) { border-bottom: none; }
-    .bc-section h3 {
-      font-size: 0.72rem;
+    .sentiment-col:first-child { border-right: 1px solid #E5E5E5; }
+    .sentiment-col-title {
+      font-family: 'SageText', sans-serif;
       font-weight: 700;
+      font-size: 0.72rem;
       text-transform: uppercase;
       letter-spacing: 0.6px;
-      margin-bottom: 12px;
-    }
-    .bc-section.danger h3  { color: #dc2626; }
-    .bc-section.success h3 { color: #00a060; }
-    .bc-section.blue h3    { color: #1d4ed8; }
-    .bc-section.purple h3  { color: #7e22ce; }
-    .bc-section.amber h3   { color: #b45309; }
-
-    .bc-section ul {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .bc-section ul li {
-      font-size: 0.85rem;
-      color: #333;
-      line-height: 1.5;
-      padding-left: 16px;
-      position: relative;
-    }
-    .bc-section ul li::before {
-      content: "›";
-      position: absolute;
-      left: 0;
-      color: #999;
-      font-weight: 700;
-    }
-
-    .objection-item {
-      background: #f9fafb;
-      border: 1px solid #e5e5e5;
-      border-radius: 8px;
-      padding: 12px 14px;
       margin-bottom: 10px;
     }
-    .objection-item:last-child { margin-bottom: 0; }
-    .objection-q {
-      font-size: 0.83rem;
-      font-weight: 600;
-      color: #1a1a1a;
-      margin-bottom: 6px;
-    }
-    .objection-q::before { content: "❝ "; color: #999; }
-    .objection-a {
-      font-size: 0.83rem;
-      color: #444;
-      line-height: 1.5;
-    }
-    .objection-a::before { content: "↳ "; color: #00a060; font-weight: 700; }
-
-    /* ── Battle Card: meta bar ── */
-    .bc-meta {
-      display: flex;
-      gap: 20px;
-      padding: 10px 24px;
-      background: #f9fafb;
-      border-bottom: 1px solid #e5e5e5;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .bc-meta-item { font-size: 0.78rem; color: #666; }
-    .bc-meta-item strong { color: #1a1a1a; }
-
-    /* ── Sentiment box ── */
-    .bc-sentiment {
-      padding: 20px 24px;
-      background: #f0f9ff;
-      border-bottom: 1px solid #bae6fd;
-    }
-    .bc-sentiment h3 {
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: #0369a1;
-      margin-bottom: 14px;
-    }
-    .sentiment-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-    .sentiment-col h4 {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #555;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-    }
-    .sentiment-col ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .sentiment-col.loves .sentiment-col-title { color: #00875a; }
+    .sentiment-col.gripes .sentiment-col-title { color: #E85D4A; }
+    .sentiment-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
     .sentiment-col ul li {
-      font-size: 0.82rem;
+      font-size: 0.83rem;
       color: #333;
-      line-height: 1.4;
-      padding-left: 14px;
+      line-height: 1.5;
+      padding-left: 12px;
+      border-left: 3px solid;
       position: relative;
     }
-    .sentiment-col ul li::before { content: "›"; position: absolute; left: 0; color: #0369a1; font-weight: 700; }
+    .sentiment-col.loves ul li { border-left-color: #00D639; }
+    .sentiment-col.gripes ul li { border-left-color: #E85D4A; }
     .sentiment-footer {
-      grid-column: 1 / -1;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid #bae6fd;
+      padding: 12px 20px;
+      border-top: 1px solid #E5E5E5;
       display: flex;
       gap: 32px;
       flex-wrap: wrap;
+      background: #fff;
     }
-    .sentiment-footer p { font-size: 0.82rem; color: #444; line-height: 1.5; }
-    .sentiment-footer p span { font-weight: 700; color: #0369a1; }
+    .sentiment-footer p { font-size: 0.8rem; color: #555; line-height: 1.5; }
+    .sentiment-footer p span { font-weight: 700; color: #333; }
 
-    /* ── Persona mapping table ── */
-    .persona-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
-    .persona-table th {
-      background: #f9fafb;
-      padding: 8px 12px;
-      text-align: left;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      color: #666;
-      border-bottom: 1px solid #e5e5e5;
+    /* Bullet list in section cards */
+    .bc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
-    .persona-table td {
-      padding: 10px 12px;
-      vertical-align: top;
-      border-bottom: 1px solid #f0f0f0;
+    .bc-list li {
+      font-size: 0.875rem;
       color: #333;
-      line-height: 1.5;
+      line-height: 1.55;
+      padding-left: 16px;
+      position: relative;
     }
-    .persona-table tr:last-child td { border-bottom: none; }
-    .persona-table td:first-child { font-weight: 700; color: #1a1a1a; white-space: nowrap; }
+    .bc-list li::before { content: '›'; position: absolute; left: 0; color: #00D639; font-weight: 700; font-size: 1rem; line-height: 1.4; }
+    .bc-list.danger li::before { color: #E85D4A; }
+    .bc-list.warning li::before { color: #f59e0b; }
 
-    /* ── Proof points ── */
-    .proof-item {
-      background: #f9fafb;
-      border: 1px solid #e5e5e5;
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 10px;
+    /* Two-column grid for sections */
+    .bc-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
     }
-    .proof-item:last-child { margin-bottom: 0; }
+    .bc-two-col .bc-section-card { margin-bottom: 0; }
+
+    /* Proof points */
+    .proof-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .proof-item {
+      background: #F5F5F5;
+      border: 1px solid #E5E5E5;
+      border-radius: 6px;
+      padding: 14px 16px;
+    }
     .proof-header {
       display: flex;
-      gap: 10px;
       align-items: center;
+      gap: 10px;
       margin-bottom: 6px;
       flex-wrap: wrap;
     }
-    .proof-customer { font-weight: 700; font-size: 0.88rem; color: #1a1a1a; }
+    .proof-customer { font-family: 'SageText', sans-serif; font-weight: 700; font-size: 0.9rem; color: #000; }
     .proof-badge {
-      background: #e0faf0;
-      color: #00a060;
       border-radius: 4px;
       padding: 2px 8px;
-      font-size: 0.75rem;
-      font-weight: 600;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
     }
-    .proof-displaced { font-size: 0.78rem; color: #888; }
-    .proof-outcome { font-size: 0.83rem; color: #333; line-height: 1.5; }
-    .proof-outcome::before { content: "Result: "; font-weight: 700; color: #00a060; }
+    .proof-badge.mid { background: #00D639; color: #000; }
+    .proof-badge.enterprise { background: #000; color: #fff; }
+    .proof-displaced { font-size: 0.78rem; color: #888; margin-left: auto; }
+    .proof-outcome {
+      font-size: 0.85rem;
+      color: #000;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+    .proof-outcome::before { content: 'Result: '; color: #00D639; font-weight: 700; }
 
-    /* ── orange section ── */
-    .bc-section.orange h3 { color: #c2410c; }
+    /* Objections */
+    .objection-item {
+      margin-bottom: 14px;
+    }
+    .objection-item:last-child { margin-bottom: 0; }
+    .objection-q {
+      background: #1A1A1A;
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 6px 6px 0 0;
+      font-size: 0.875rem;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+    .objection-q::before { content: '❝  '; color: #00D639; }
+    .objection-a {
+      background: #fff;
+      border: 1px solid #E5E5E5;
+      border-top: none;
+      padding: 12px 16px;
+      border-radius: 0 0 6px 6px;
+      font-size: 0.875rem;
+      color: #333;
+      line-height: 1.5;
+    }
+    .objection-a::before { content: '↳ '; color: #00D639; font-weight: 700; }
+
+    /* Stakeholder map table */
+    .stakeholder-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+    .stakeholder-table th {
+      background: #F5F5F5;
+      padding: 10px 14px;
+      text-align: left;
+      font-family: 'SageText', sans-serif;
+      font-weight: 700;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #888;
+      border-bottom: 1px solid #E5E5E5;
+    }
+    .stakeholder-table td {
+      padding: 11px 14px;
+      vertical-align: top;
+      border-bottom: 1px solid #F5F5F5;
+      color: #333;
+      line-height: 1.5;
+    }
+    .stakeholder-table tr:last-child td { border-bottom: none; }
+    .stakeholder-table td:first-child { font-weight: 700; color: #000; white-space: nowrap; }
+
+    /* Source tag */
+    .source-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      color: #888;
+      background: #F5F5F5;
+      border: 1px solid #E5E5E5;
+      border-radius: 3px;
+      padding: 1px 6px;
+      font-weight: 500;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    /* Footer */
+    .bc-footer {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 0 0;
+      flex-wrap: wrap;
+    }
+    .btn-export {
+      padding: 10px 24px;
+      background: #000;
+      color: #fff;
+      font-family: 'SageText', sans-serif;
+      font-weight: 700;
+      font-size: 0.875rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-export:hover { background: #222; }
+    .bc-footer-meta {
+      font-family: 'SageText', sans-serif;
+      font-weight: 300;
+      font-size: 0.78rem;
+      color: #888;
+    }
+    .sources-toggle {
+      font-size: 0.78rem;
+      color: #888;
+      cursor: pointer;
+      text-decoration: underline;
+      background: none;
+      border: none;
+      font-family: 'SageText', sans-serif;
+    }
+    .sources-list {
+      display: none;
+      width: 100%;
+      margin-top: 8px;
+      font-size: 0.78rem;
+      color: #888;
+      line-height: 1.8;
+    }
+    .sources-list.open { display: block; }
+
+    /* ── Responsive ─────────────────────────────────────────────────────────── */
+    @media (max-width: 680px) {
+      .bc-controls { flex-direction: column; }
+      .bc-generate-btn { width: 100%; }
+      .sentiment-cols { grid-template-columns: 1fr; }
+      .sentiment-col:first-child { border-right: none; border-bottom: 1px solid #E5E5E5; }
+      .bc-two-col { grid-template-columns: 1fr; }
+      .bc-output { padding: 0 16px 40px; }
+      .top-bar, .tabs { padding-left: 16px; padding-right: 16px; }
+    }
+
+    /* ── Print/PDF styles ───────────────────────────────────────────────────── */
+    @media print {
+      .top-bar, .tabs, .bc-controls, .bc-footer { display: none !important; }
+      .bc-output { margin: 0; padding: 0; max-width: 100%; }
+      .bc-section-card, .quick-wins-banner, .sentiment-card { page-break-inside: avoid; }
+    }
   </style>
 </head>
 <body>
 
-<header>
-  <div class="logo-dot"></div>
-  <h1>Sage People <span>Brain</span></h1>
-</header>
+<!-- ── Top bar ── -->
+<div class="top-bar">
+  <img class="logo" src="/static/images/Sage_logo.png" alt="Sage"
+       onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='block'">
+  <span class="logo-fallback" id="logo-fallback" style="display:none">Sage</span>
+  <span class="app-name">People Brain</span>
+</div>
 
+<!-- ── Tabs ── -->
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('search', this)">Knowledge Search</button>
   <button class="tab-btn" onclick="switchTab('battlecard', this)">Battle Cards</button>
 </div>
 
-<!-- ── Tab: Knowledge Search ── -->
+<!-- ════════════════════════════════════════════════════════════════════════════
+     Tab: Knowledge Search
+     ════════════════════════════════════════════════════════════════════════ -->
 <div id="tab-search" class="tab-panel active">
   <div class="search-panel">
     <div class="search-row">
@@ -520,8 +659,7 @@
       <button onclick="doSearch()">Search</button>
     </div>
     <div class="filters">
-      <label>
-        Doc type
+      <label>Doc type
         <select id="filterType">
           <option value="">All types</option>
           <option value="case_study">Case Study</option>
@@ -533,16 +671,14 @@
           <option value="report">Report</option>
         </select>
       </label>
-      <label>
-        Segment
+      <label>Segment
         <select id="filterSegment">
           <option value="">All segments</option>
           <option value="enterprise">Enterprise</option>
           <option value="mid_market">Mid-market</option>
         </select>
       </label>
-      <label>
-        Results
+      <label>Results
         <select id="filterTopK">
           <option value="5">5</option>
           <option value="10">10</option>
@@ -551,7 +687,6 @@
       </label>
     </div>
   </div>
-
   <div class="results-area" id="resultsArea">
     <div class="empty-state">
       <div class="icon">🧠</div>
@@ -560,273 +695,351 @@
   </div>
 </div>
 
-<!-- ── Tab: Battle Cards ── -->
+<!-- ════════════════════════════════════════════════════════════════════════════
+     Tab: Battle Cards
+     ════════════════════════════════════════════════════════════════════════ -->
 <div id="tab-battlecard" class="tab-panel">
-  <div class="bc-panel">
-    <div class="bc-input-row">
-      <input type="text" id="competitorInput" placeholder="e.g. Workday, SAP SuccessFactors, Oracle HCM, Ceridian, ADP" />
-      <button onclick="doBattleCard()">Generate Battle Card</button>
+
+  <!-- Controls bar -->
+  <div class="bc-controls">
+    <div class="bc-field">
+      <label>Competitor</label>
+      <input type="text" id="competitorInput" placeholder="e.g. Workday, HiBob, SAP SuccessFactors…" />
     </div>
-    <div id="bcArea">
-      <div class="empty-state">
-        <div class="icon">⚔️</div>
-        <p>Enter a competitor name to generate a battle card.</p>
-      </div>
+    <div class="bc-field">
+      <label>Who are you meeting?</label>
+      <input type="text" id="personaInput" placeholder="e.g. CFO, HR Director, IT Director focused on Salesforce…" />
+    </div>
+    <button class="bc-generate-btn" id="generateBtn" onclick="doBattleCard()">Generate Battle Card</button>
+  </div>
+
+  <!-- Output -->
+  <div class="bc-output" id="bcArea">
+    <div class="empty-state" style="padding-top:80px">
+      <div class="icon">⚔️</div>
+      <p>Enter a competitor and who you're meeting to generate a tailored battle card.</p>
     </div>
   </div>
+
 </div>
 
 <script>
-  // ── Tab switching ──────────────────────────────────────────
+  // ── Helpers ────────────────────────────────────────────────────────────────
   function switchTab(name, btn) {
-    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-    document.getElementById("tab-" + name).classList.add("active");
-    btn.classList.add("active");
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
   }
 
-  // Allow pressing Enter in the search box
-  document.getElementById("queryInput").addEventListener("keydown", function(e) {
-    if (e.key === "Enter") doSearch();
-  });
+  function esc(str) {
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
 
-  // Allow pressing Enter in the competitor box
-  document.getElementById("competitorInput").addEventListener("keydown", function(e) {
-    if (e.key === "Enter") doBattleCard();
-  });
+  function li(items, cls) {
+    return (items || []).map(i => `<li>${esc(i)}</li>`).join('');
+  }
 
   function formatDocType(t) {
-    const map = {
-      case_study: "Case Study", competitor: "Competitor Analysis",
-      icp_persona: "ICP & Personas", market_context: "Market Context",
-      messaging: "Messaging", product: "Product", report: "Report"
-    };
+    const map = { case_study:'Case Study', competitor:'Competitor Analysis',
+      icp_persona:'ICP & Personas', market_context:'Market Context',
+      messaging:'Messaging', product:'Product', report:'Report' };
     return map[t] || t;
   }
 
-  function formatSegment(s) {
-    return s === "mid_market" ? "Mid-market" : s.charAt(0).toUpperCase() + s.slice(1);
-  }
+  // Enter key triggers
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('queryInput').addEventListener('keydown', e => { if (e.key==='Enter') doSearch(); });
+    document.getElementById('competitorInput').addEventListener('keydown', e => { if (e.key==='Enter') doBattleCard(); });
+    document.getElementById('personaInput').addEventListener('keydown', e => { if (e.key==='Enter') doBattleCard(); });
+  });
 
+  // ── Knowledge Search ───────────────────────────────────────────────────────
   function doSearch() {
-    const query   = document.getElementById("queryInput").value.trim();
-    const docType = document.getElementById("filterType").value;
-    const segment = document.getElementById("filterSegment").value;
-    const topK    = parseInt(document.getElementById("filterTopK").value);
-    const area    = document.getElementById("resultsArea");
-
+    const query   = document.getElementById('queryInput').value.trim();
+    const docType = document.getElementById('filterType').value;
+    const segment = document.getElementById('filterSegment').value;
+    const topK    = parseInt(document.getElementById('filterTopK').value);
+    const area    = document.getElementById('resultsArea');
     if (!query) return;
 
-    area.innerHTML = `<div class="loading"><div class="spinner"></div>Searching...</div>`;
+    area.innerHTML = `<div class="loading"><div class="spinner"></div>Searching…</div>`;
 
-    fetch("/api/search", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query, doc_type: docType || null, segment: segment || null, top_k: topK })
+    fetch('/api/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, doc_type: docType||null, segment: segment||null, top_k: topK })
     })
     .then(r => r.json())
     .then(data => {
-      if (data.error) {
-        area.innerHTML = `<div class="error-msg">Error: ${data.error}</div>`;
-        return;
-      }
+      if (data.error) { area.innerHTML = `<div class="error-msg">Error: ${esc(data.error)}</div>`; return; }
       const results = data.results;
       if (!results.length) {
-        area.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><p>No results found. Try a different query or remove filters.</p></div>`;
+        area.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><p>No results found. Try a different query.</p></div>`;
         return;
       }
-
-      let html = `<p class="results-count">${results.length} result${results.length !== 1 ? "s" : ""} for "<strong>${query}</strong>"</p>`;
-
+      let html = `<p class="results-count">${results.length} result${results.length!==1?'s':''} for "<strong>${esc(query)}</strong>"</p>`;
       results.forEach(r => {
         const painHtml = r.pain_points.length
-          ? `<div class="pain-points"><h4>Pain Points</h4><ul>${r.pain_points.map(p => `<li>${p}</li>`).join("")}</ul></div>`
-          : "";
-
+          ? `<div class="pain-points"><h4>Pain Points</h4><ul>${r.pain_points.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>` : '';
         html += `
           <div class="card">
             <div class="card-header">
-              <div class="card-title">${r.file_name}</div>
+              <div class="card-title">${esc(r.file_name)}</div>
               <div class="score-badge">Score ${r.score}</div>
             </div>
             <div class="card-tags">
               <span class="tag tag-type">${formatDocType(r.doc_type)}</span>
-              ${r.segment ? `<span class="tag tag-segment">${formatSegment(r.segment)}</span>` : ""}
-              ${r.persona ? `<span class="tag tag-persona">${r.persona}</span>` : ""}
+              ${r.segment ? `<span class="tag tag-segment">${r.segment}</span>` : ''}
+              ${r.persona ? `<span class="tag tag-persona">${esc(r.persona)}</span>` : ''}
             </div>
             ${painHtml}
-            <div class="card-text">${r.text.split(/\n\n+/).map(p => `<p>${p.trim()}</p>`).join("")}</div>
+            <div class="card-text">${r.text.split(/\n\n+/).map(p=>`<p>${esc(p.trim())}</p>`).join('')}</div>
           </div>`;
       });
-
       area.innerHTML = html;
     })
-    .catch(() => {
-      area.innerHTML = `<div class="error-msg">Something went wrong. Is the server running?</div>`;
-    });
+    .catch(() => { area.innerHTML = `<div class="error-msg">Something went wrong. Is the server running?</div>`; });
   }
 
-  // ── Battle Card ────────────────────────────────────────────
+  // ── Battle Card ────────────────────────────────────────────────────────────
+  let _lastCardData = null;
+  let _lastCardTitle = 'Sage People Battle Card';
+
   function doBattleCard() {
-    const competitor = document.getElementById("competitorInput").value.trim();
-    const area = document.getElementById("bcArea");
+    const competitor = document.getElementById('competitorInput').value.trim();
+    const persona    = document.getElementById('personaInput').value.trim();
+    const area       = document.getElementById('bcArea');
+    const btn        = document.getElementById('generateBtn');
 
-    if (!competitor) return;
+    if (!competitor) {
+      document.getElementById('competitorInput').focus();
+      return;
+    }
 
-    area.innerHTML = `<div class="loading"><div class="spinner"></div><span id="bcStatus">Starting…</span></div>`;
+    btn.disabled = true;
+    btn.textContent = 'Generating…';
+    area.innerHTML = `
+      <div class="loading">
+        <div class="spinner"></div>
+        <div class="loading-step" id="bcStatus">Starting…</div>
+        <div class="loading-sub">Fetching reviews → Searching knowledge base → Generating with Claude</div>
+      </div>`;
 
-    // Step 1: kick off the background job
-    fetch("/api/battlecard", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ competitor })
+    fetch('/api/battlecard', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ competitor, persona })
     })
     .then(r => r.json())
     .then(data => {
       if (data.error) throw new Error(data.error);
-      pollBattleCard(data.job_id, area);
+      pollBattleCard(data.job_id, area, btn);
     })
     .catch(err => {
-      area.innerHTML = `<div class="error-msg"><strong>Failed to start:</strong> ${err.message}</div>`;
+      btn.disabled = false; btn.textContent = 'Generate Battle Card';
+      area.innerHTML = `<div class="error-msg"><strong>Failed to start:</strong> ${esc(err.message)}</div>`;
     });
   }
 
-  function pollBattleCard(jobId, area) {
-    const statusEl = document.getElementById("bcStatus");
+  function pollBattleCard(jobId, area, btn) {
     const interval = setInterval(() => {
       fetch(`/api/battlecard/status/${jobId}`)
         .then(r => r.json())
         .then(job => {
-          if (job.status === "running") {
-            if (statusEl) statusEl.textContent = job.step || "Working…";
-            return; // keep polling
-          }
-          clearInterval(interval);
-          if (job.status === "error") {
-            const safeErr = (job.error||"Unknown error").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-            area.innerHTML = `<div class="error-msg"><strong>Error:</strong> ${safeErr}</div>`;
+          if (job.status === 'running') {
+            const el = document.getElementById('bcStatus');
+            if (el) el.textContent = job.step || 'Working…';
             return;
           }
+          clearInterval(interval);
+          btn.disabled = false; btn.textContent = 'Generate Battle Card';
+          if (job.status === 'error') {
+            area.innerHTML = `<div class="error-msg"><strong>Error:</strong> ${esc(job.error || 'Unknown error')}</div>`;
+            return;
+          }
+          _lastCardData = job.result;
           renderBattleCard(job.result, area);
         })
         .catch(() => {
           clearInterval(interval);
+          btn.disabled = false; btn.textContent = 'Generate Battle Card';
           area.innerHTML = `<div class="error-msg">Lost connection while waiting for results. Please try again.</div>`;
         });
     }, 3000);
   }
 
   function renderBattleCard(card, area) {
+    const competitor = esc(card.competitor || '');
+    const briefTitle = esc(card.persona_briefing_title || 'Sales Briefing');
+    _lastCardTitle = `Sage People vs ${card.competitor} — ${card.persona_briefing_title || 'Battle Card'}`;
 
-      // Helpers
-      const li = items => (items || []).map(i => `<li>${i}</li>`).join("");
+    // Quick wins
+    const quickWinsHtml = `
+      <div class="quick-wins-banner">
+        <div class="qw-title">Quick Wins — 10 Second Briefing · ${briefTitle}</div>
+        <ul>${li(card.quick_wins)}</ul>
+      </div>`;
 
-      // Sentiment section
-      const s = card.sentiment_summary || {};
-      const sentimentHtml = `
-        <div class="bc-sentiment">
-          <h3>Live HR &amp; Payroll Review Sentiment — ${s.source || "G2 &amp; TrustRadius"}</h3>
-          <div class="sentiment-grid">
-            <div class="sentiment-col">
-              <h4>What users love</h4>
-              <ul>${li(s.what_users_love)}</ul>
-            </div>
-            <div class="sentiment-col">
-              <h4>What users complain about</h4>
-              <ul>${li(s.what_users_complain_about)}</ul>
-            </div>
-            <div class="sentiment-footer">
-              ${s.segment_patterns ? `<p><span>Segment patterns:</span> ${s.segment_patterns}</p>` : ""}
-              ${s.recent_trend ? `<p><span>Recent trend:</span> ${s.recent_trend}</p>` : ""}
-            </div>
+    // Sentiment
+    const s = card.sentiment_summary || {};
+    const sentimentHtml = `
+      <div class="sentiment-card">
+        <div class="section-header">
+          <span class="section-title">Competitor Review Sentiment</span>
+          <span class="sentiment-source-tag">${esc(s.source || 'G2 & TrustRadius')}</span>
+        </div>
+        <div class="sentiment-cols">
+          <div class="sentiment-col loves">
+            <div class="sentiment-col-title">What Users Love</div>
+            <ul>${li(s.what_users_love)}</ul>
           </div>
+          <div class="sentiment-col gripes">
+            <div class="sentiment-col-title">What Users Complain About</div>
+            <ul>${li(s.what_users_complain_about)}</ul>
+          </div>
+        </div>
+        ${(s.segment_patterns||s.recent_trend) ? `
+        <div class="sentiment-footer">
+          ${s.segment_patterns ? `<p><span>Segment patterns:</span> ${esc(s.segment_patterns)}</p>` : ''}
+          ${s.recent_trend     ? `<p><span>Recent trend:</span> ${esc(s.recent_trend)}</p>` : ''}
+        </div>` : ''}
+      </div>`;
+
+    // Proof points
+    const proofItems = (card.proof_points || []).map(p => {
+      if (typeof p === 'string') return `<div class="proof-item"><div class="proof-outcome">${esc(p)}</div></div>`;
+      const sizeStr = (p.size||'').toLowerCase();
+      const badgeCls = sizeStr.includes('enterprise') ? 'enterprise' : 'mid';
+      return `
+        <div class="proof-item">
+          <div class="proof-header">
+            <span class="proof-customer">${esc(p.customer||'')}</span>
+            ${p.size ? `<span class="proof-badge ${badgeCls}">${esc(p.size)}</span>` : ''}
+            ${p.displaced ? `<span class="proof-displaced">displaced ${esc(p.displaced)}</span>` : ''}
+          </div>
+          ${p.outcome ? `<div class="proof-outcome">${esc(p.outcome)}</div>` : ''}
         </div>`;
+    }).join('');
+    const proofHtml = `
+      <div class="bc-section-card">
+        <div class="section-header"><span class="section-title">Proof Points &amp; Customer Wins</span></div>
+        <div class="section-body"><div class="proof-grid">${proofItems}</div></div>
+      </div>`;
 
-      // Objections
-      const objHtml = (card.objections || []).map(o => `
-        <div class="objection-item">
-          <div class="objection-q">${o.objection}</div>
-          <div class="objection-a">${o.response}</div>
-        </div>`).join("");
+    // Differentiators
+    const diffsHtml = `
+      <div class="bc-section-card">
+        <div class="section-header"><span class="section-title">Our Differentiators</span></div>
+        <div class="section-body"><ul class="bc-list">${li(card.our_differentiators)}</ul></div>
+      </div>`;
 
-      // Proof points (structured objects)
-      const proofHtml = (card.proof_points || []).map(p => {
-        if (typeof p === "string") {
-          return `<div class="proof-item"><div class="proof-outcome">${p}</div></div>`;
-        }
-        return `
-          <div class="proof-item">
-            <div class="proof-header">
-              <span class="proof-customer">${p.customer || ""}</span>
-              ${p.size ? `<span class="proof-badge">${p.size}</span>` : ""}
-              ${p.displaced ? `<span class="proof-displaced">displaced ${p.displaced}</span>` : ""}
-            </div>
-            ${p.outcome ? `<div class="proof-outcome">${p.outcome}</div>` : ""}
-          </div>`;
-      }).join("");
+    // Objections
+    const objItems = (card.objections||[]).map(o => `
+      <div class="objection-item">
+        <div class="objection-q">${esc(o.objection||'')}</div>
+        <div class="objection-a">${esc(o.response||'')}</div>
+      </div>`).join('');
+    const objHtml = `
+      <div class="bc-section-card">
+        <div class="section-header"><span class="section-title">Objection Handling</span></div>
+        <div class="section-body">${objItems}</div>
+      </div>`;
 
-      // Sources pill list
-      const sourcesHtml = (card.sources_used || []).length
-        ? `<span class="bc-meta-item"><strong>KB sources:</strong> ${card.sources_used.join(", ")}</span>`
-        : "";
+    // Why they win + Where we lose (two-col)
+    const winLoseHtml = `
+      <div class="bc-two-col">
+        <div class="bc-section-card">
+          <div class="section-header"><span class="section-title">Why They Win</span></div>
+          <div class="section-body"><ul class="bc-list danger">${li(card.why_they_win)}</ul></div>
+        </div>
+        <div class="bc-section-card">
+          <div class="section-header"><span class="section-title">Where We Lose</span></div>
+          <div class="section-body"><ul class="bc-list warning">${li(card.where_we_lose)}</ul></div>
+        </div>
+      </div>`;
 
-      area.innerHTML = `
-        <div class="bc-card">
+    // Trap questions + Landmines (two-col)
+    const trapLandHtml = `
+      <div class="bc-two-col">
+        <div class="bc-section-card">
+          <div class="section-header"><span class="section-title">Trap-Setting Questions</span></div>
+          <div class="section-body"><ul class="bc-list">${li(card.trap_questions)}</ul></div>
+        </div>
+        <div class="bc-section-card">
+          <div class="section-header"><span class="section-title">Landmines to Plant Early</span></div>
+          <div class="section-body"><ul class="bc-list">${li(card.landmines)}</ul></div>
+        </div>
+      </div>`;
 
-          <div class="bc-header">
-            <h2>Sage People</h2>
-            <span class="vs-badge">vs</span>
-            <h2>${card.competitor}</h2>
+    // Stakeholder map
+    const smRows = (card.stakeholder_map||[]).map(r => `
+      <tr>
+        <td>${esc(r.persona||'')}</td>
+        <td>${esc(r.shift_emphasis_to||'')}</td>
+        <td>${esc(r.key_proof_point||'')}</td>
+      </tr>`).join('');
+    const stakeholderHtml = smRows ? `
+      <div class="bc-section-card">
+        <div class="section-header"><span class="section-title">Stakeholder Map — If Others Join</span></div>
+        <div class="section-body" style="padding:0">
+          <table class="stakeholder-table">
+            <thead><tr><th>If this person joins</th><th>Shift emphasis to</th><th>Key proof point</th></tr></thead>
+            <tbody>${smRows}</tbody>
+          </table>
+        </div>
+      </div>` : '';
+
+    // Footer
+    const sourceList = (card.sources_used||[]).join('<br>');
+    const footerHtml = `
+      <div class="bc-footer">
+        <button class="btn-export" onclick="exportPDF()">Export to PDF</button>
+        <span class="bc-footer-meta">Last generated: ${esc(card.generated_date||'')}</span>
+        ${sourceList ? `
+          <button class="sources-toggle" onclick="toggleSources(this)">Sources ▾</button>
+          <div class="sources-list">${sourceList}</div>` : ''}
+      </div>`;
+
+    area.innerHTML = `
+      <div id="bc-printable">
+        <div class="bc-title-block">
+          <div class="bc-vs-line">Sage People <span class="green">vs</span> ${competitor} — ${briefTitle}</div>
+          <div class="bc-meta-line">
+            ${card.segment ? `<span class="bc-meta-pill"><strong>Segment:</strong> ${esc(card.segment)}</span>` : ''}
+            <span class="bc-meta-pill">Confidential · Internal use only</span>
           </div>
+        </div>
+        ${quickWinsHtml}
+        ${sentimentHtml}
+        ${proofHtml}
+        ${diffsHtml}
+        ${objHtml}
+        ${winLoseHtml}
+        ${trapLandHtml}
+        ${stakeholderHtml}
+      </div>
+      ${footerHtml}`;
+  }
 
-          <div class="bc-meta">
-            ${card.segment ? `<span class="bc-meta-item"><strong>Segment:</strong> ${card.segment}</span>` : ""}
-            ${card.generated_date ? `<span class="bc-meta-item"><strong>Generated:</strong> ${card.generated_date}</span>` : ""}
-            ${sourcesHtml}
-          </div>
+  function toggleSources(btn) {
+    const list = btn.nextElementSibling;
+    list.classList.toggle('open');
+    btn.textContent = list.classList.contains('open') ? 'Sources ▴' : 'Sources ▾';
+  }
 
-          ${sentimentHtml}
-
-          <div class="bc-grid">
-            <div class="bc-section danger">
-              <h3>Why They Win (Their Strengths)</h3>
-              <ul>${li(card.why_they_win)}</ul>
-            </div>
-            <div class="bc-section orange">
-              <h3>Where We Lose</h3>
-              <ul>${li(card.where_we_lose)}</ul>
-            </div>
-          </div>
-
-          <div class="bc-grid">
-            <div class="bc-section success full-width">
-              <h3>Our Differentiators</h3>
-              <ul>${li(card.our_differentiators)}</ul>
-            </div>
-          </div>
-
-          <div class="bc-grid">
-            <div class="bc-section blue full-width">
-              <h3>Objection Handling</h3>
-              ${objHtml}
-            </div>
-          </div>
-
-          <div class="bc-grid">
-            <div class="bc-section purple full-width">
-              <h3>Trap-Setting Questions</h3>
-              <ul>${li(card.trap_questions)}</ul>
-            </div>
-          </div>
-
-          <div class="bc-grid">
-            <div class="bc-section success full-width" style="border-bottom:none">
-              <h3>Proof Points &amp; Customer Wins</h3>
-              ${proofHtml}
-            </div>
-          </div>
-
-        </div>`;
+  function exportPDF() {
+    const el = document.getElementById('bc-printable');
+    if (!el) return;
+    html2pdf().set({
+      margin: [12, 12],
+      filename: _lastCardTitle + '.pdf',
+      image: { type: 'jpeg', quality: 0.97 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }).from(el).save();
   }
 </script>
 

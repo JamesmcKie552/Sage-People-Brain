@@ -92,6 +92,7 @@ def battlecard():
     """Kick off battle card generation in a background thread and return a job ID immediately."""
     data = request.get_json()
     competitor = data.get("competitor", "").strip()
+    persona   = data.get("persona", "").strip()
 
     if not competitor:
         return jsonify({"error": "No competitor provided"}), 400
@@ -100,7 +101,7 @@ def battlecard():
     _jobs[job_id] = {"status": "running", "step": "Starting…"}
 
     thread = threading.Thread(
-        target=_run_battlecard, args=(job_id, competitor), daemon=True
+        target=_run_battlecard, args=(job_id, competitor, persona), daemon=True
     )
     thread.start()
 
@@ -116,7 +117,7 @@ def battlecard_status(job_id):
     return jsonify(job)
 
 
-def _run_battlecard(job_id: str, competitor: str):
+def _run_battlecard(job_id: str, competitor: str, persona: str = ""):
     """Background worker — runs the full battle card pipeline and stores the result in _jobs."""
     try:
         today = date.today().strftime("%B %d, %Y")
@@ -198,11 +199,24 @@ def _run_battlecard(job_id: str, competitor: str):
 
         # ── Step 3: Generate battle card ───────────────────────────────────────
         _jobs[job_id]["step"] = "Step 3/3 — Generating battle card with Claude…"
-        print(f"[battlecard:{job_id}] Step 3: Claude generation")
+        print(f"[battlecard:{job_id}] Step 3: Claude generation (persona={persona!r})")
+
+        persona_context = persona if persona else "No specific persona provided — create a general sales rep briefing."
 
         prompt = f"""You are a senior GTM strategist at Sage People, a cloud-native HR & HCM platform for 200–5,000 employee organisations.
 
-Build a concise, honest battle card for competing against {competitor}. Sales reps scan this on their phone before a call — every bullet must be one sentence, punchy, and actionable.
+PERSONA THIS CARD IS FOR: {persona_context}
+
+Interpret the persona intelligently. "CFO" and "Chief Financial Officer" mean the same thing. "Head of People who reports to the CEO" is a senior strategic HR leader. "IT Director focused on Salesforce" means emphasise Sage People's Salesforce-native architecture heavily. Tailor everything — language, emphasis, ordering, and framing — to what THIS person cares about.
+
+Language guide by persona type:
+- Financial (CFO, Finance Director): ROI, TCO, cost avoidance, budget, payback period, risk
+- HR/People (CHRO, HR Director, Head of People): employee experience, HR team ownership, time-to-value, configurability, people strategy
+- IT (CTO, IT Director, Systems): architecture, integration, security, data model, platform dependency, Salesforce ecosystem
+- Procurement (Procurement Lead, Sourcing): vendor comparison, SLA, contract flexibility, total cost, support model
+- Operations (COO, Head of Ops): efficiency, automation, time savings, process improvement, headcount ROI
+
+Build a concise, honest battle card for competing against {competitor}. Every bullet must be one sentence, punchy, and actionable.
 
 === EXTERNAL REVIEW SENTIMENT (G2 / TrustRadius) ===
 {sentiment_text}
@@ -219,9 +233,13 @@ Build a concise, honest battle card for competing against {competitor}. Sales re
 Return ONLY a valid JSON object — no markdown, no extra text — matching this exact structure:
 {{
   "competitor": "{competitor}",
+  "persona_briefing_title": "Derive a short title from the persona, e.g. 'CFO Briefing', 'Head of People Briefing', 'IT Director Briefing'. If no persona, use 'Sales Briefing'.",
   "segment": "Enterprise / Mid-market / Both",
   "generated_date": "{today}",
   "sources_used": {json.dumps(source_files)},
+  "quick_wins": [
+    "3 bullets — the single most important things for THIS persona to know. Framed in their language. One sentence each. These are what a rep reads in the 30 seconds before walking into the meeting."
+  ],
   "sentiment_summary": {{
     "source": "G2 and TrustRadius",
     "what_users_love": ["3 recurring positives — one sentence each, cite [G2] or [TrustRadius]"],
@@ -229,38 +247,46 @@ Return ONLY a valid JSON object — no markdown, no extra text — matching this
     "segment_patterns": "One sentence: how do enterprise vs mid-market reviewers differ?",
     "recent_trend": "One sentence on recent sentiment direction."
   }},
+  "proof_points": [
+    {{"customer": "Name", "size": "Headcount / segment", "displaced": "What they replaced", "outcome": "One measurable result most relevant to the persona"}}
+  ],
+  "our_differentiators": [
+    "4 bullets ordered by relevance to the persona. One sentence each with a specific customer name or data point. End with [Knowledge Base]."
+  ],
+  "objections": [
+    {{"objection": "An objection THIS persona is specifically likely to raise", "response": "One-sentence counter with a real customer example or stat."}},
+    {{"objection": "...", "response": "..."}},
+    {{"objection": "...", "response": "..."}}
+  ],
   "why_they_win": [
     "3 bullets — what {competitor} genuinely does well. One sentence each. End with [G2], [TrustRadius], or [Knowledge Base]."
   ],
   "where_we_lose": [
     "2 bullets — situations where {competitor} is the better fit. One sentence each. Be candid."
   ],
-  "our_differentiators": [
-    "4 bullets — why Sage People wins. One sentence each with a specific customer name or data point. End with [Knowledge Base]."
-  ],
-  "objections": [
-    {{"objection": "Short verbatim objection reps hear", "response": "One-sentence counter with a real customer example or stat."}},
-    {{"objection": "...", "response": "..."}},
-    {{"objection": "...", "response": "..."}}
-  ],
   "trap_questions": [
-    "4 discovery questions starting with 'How do you...' or 'What happens when...'. Target {competitor}'s known weak spots from reviews."
+    "4 discovery questions tailored to topics THIS persona controls or cares about. Start with 'How do you...' or 'What happens when...'. Target {competitor}'s known weak spots."
   ],
-  "proof_points": [
-    {{"customer": "Name", "size": "Headcount / segment", "displaced": "What they replaced", "outcome": "One measurable result"}}
+  "landmines": [
+    "3 landmines — exact phrases the rep can say verbatim, framed in this persona's language and concerns. Start with 'One thing worth exploring early is...' or similar."
+  ],
+  "stakeholder_map": [
+    {{"persona": "A stakeholder who might unexpectedly join the meeting", "shift_emphasis_to": "What to pivot to if they appear", "key_proof_point": "One customer example to reference"}}
   ]
 }}
 
 RULES:
-- One sentence per bullet. No exceptions.
+- Exactly 3 items in quick_wins. These must be persona-specific, not generic.
+- One sentence per bullet throughout. No exceptions.
 - Be honest in why_they_win and where_we_lose — a one-sided card loses credibility.
 - Only use claims grounded in the knowledge base or G2/TrustRadius. No invented facts.
 - Direct, conversational language — internal use, not marketing copy.
-- Always tag the source [Knowledge Base], [G2], or [TrustRadius] at the end of each bullet."""
+- Always tag the source [Knowledge Base], [G2], or [TrustRadius] at the end of each bullet.
+- stakeholder_map should have 3-4 rows covering the most likely uninvited attendees."""
 
         message = claude_client.messages.create(
             model="claude-sonnet-4-6",
-            max_tokens=4000,
+            max_tokens=5000,
             messages=[{"role": "user", "content": prompt}],
         )
 
