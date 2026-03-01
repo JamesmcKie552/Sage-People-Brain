@@ -138,7 +138,7 @@ def _run_battlecard(job_id: str, competitor: str, persona: str = ""):
                 messages=[{
                     "role": "user",
                     "content": (
-                        f"Search G2 and TrustRadius for user reviews of {competitor} specifically "
+                        f"Search G2, TrustRadius, and Capterra for user reviews of {competitor} specifically "
                         f"as an HR, HCM, or payroll software product. Only use reviews that relate to "
                         f"HR, payroll, workforce management, or people management use cases — ignore any "
                         f"reviews about other product lines this vendor may have.\n\n"
@@ -147,7 +147,7 @@ def _run_battlecard(job_id: str, competitor: str, persona: str = ""):
                         f"2. Top 3-5 things HR/payroll users complain about (recurring negative themes)\n"
                         f"3. Segment patterns: Do enterprise HR teams say different things than mid-market HR teams?\n"
                         f"4. Recent trend: Has sentiment shifted in the last 12 months?\n\n"
-                        f"Be specific to the HR/payroll context. Cite G2 or TrustRadius as the source for each point. "
+                        f"Draw from all three platforms — G2, TrustRadius, and Capterra — and cite the source for each point. "
                         f"Do not include sentiment from reviews about unrelated product areas."
                     ),
                 }],
@@ -241,9 +241,9 @@ Return ONLY a valid JSON object — no markdown, no extra text — matching this
     "3 bullets — the single most important things for THIS persona to know. Framed in their language. One sentence each. These are what a rep reads in the 30 seconds before walking into the meeting."
   ],
   "sentiment_summary": {{
-    "source": "G2 and TrustRadius",
-    "what_users_love": ["3 recurring positives — one sentence each, cite [G2] or [TrustRadius]"],
-    "what_users_complain_about": ["3 recurring complaints — one sentence each, cite source"],
+    "source": "G2, TrustRadius and Capterra",
+    "what_users_love": ["3 recurring positives — one sentence each, cite [G2], [TrustRadius], or [Capterra]"],
+    "what_users_complain_about": ["3 recurring complaints — one sentence each, cite [G2], [TrustRadius], or [Capterra]"],
     "segment_patterns": "One sentence: how do enterprise vs mid-market reviewers differ?",
     "recent_trend": "One sentence on recent sentiment direction."
   }},
