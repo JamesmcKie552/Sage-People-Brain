@@ -721,6 +721,15 @@
     .cs-pain-points ul li::before { content: "·  "; color: #00D639; font-weight: 700; }
     .cs-pain-points ul li { font-size: 0.88rem; color: #333; }
     .cs-snippet { font-size: 0.88rem; color: #555; line-height: 1.55; border-left: 3px solid #E5E5E5; padding-left: 10px; }
+    .cs-sections { display: flex; flex-direction: column; gap: 10px; }
+    .cs-section { display: flex; flex-direction: column; gap: 3px; }
+    .cs-section-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #999; }
+    .cs-section .cs-section-label { color: #999; }
+    .cs-results .cs-section-label { color: #00875a; }
+    .cs-section-text { font-size: 0.88rem; color: #333; line-height: 1.55; }
+    .cs-quote { background: #F5F5F5; border-left: 3px solid #00D639; padding: 12px 14px; border-radius: 0 6px 6px 0; }
+    .cs-quote-text { font-size: 0.9rem; color: #222; line-height: 1.5; font-style: italic; }
+    .cs-quote-attr { font-size: 0.78rem; color: #666; margin-top: 6px; font-weight: 500; }
     @media (max-width: 680px) {
       .cs-controls { padding: 16px; }
       .cs-grid { padding: 16px; grid-template-columns: 1fr; }
@@ -912,20 +921,30 @@
       return;
     }
     area.innerHTML = results.map(r => {
-      const painList = (r.pain_points || []).map(p => `<li>${esc(p)}</li>`).join('');
-      const segLabel = r.segment === 'enterprise' ? 'Enterprise' : r.segment === 'mid_market' ? 'Mid-Market' : r.segment;
+      const hasQuote = r.quote && r.quote.text;
+      const quoteBlock = hasQuote ? `
+        <div class="cs-quote">
+          <div class="cs-quote-text">"${esc(r.quote.text)}"</div>
+          ${r.quote.name ? `<div class="cs-quote-attr">— ${esc(r.quote.name)}${r.quote.title ? ', ' + esc(r.quote.title) : ''}</div>` : ''}
+        </div>` : '';
+      const metaItems = [
+        r.company_size ? `<span class="tag tag-persona">${esc(r.company_size)}</span>` : '',
+        r.country      ? `<span class="tag tag-type">${esc(r.country)}</span>` : '',
+        r.product      ? `<span class="tag tag-segment">${esc(r.product)}</span>` : '',
+      ].filter(Boolean).join('');
       return `
         <div class="cs-card">
           <div class="cs-card-header">
             <div class="cs-company">${esc(r.company)}</div>
-            ${r.industry ? `<span class="tag tag-type">${esc(r.industry)}</span>` : ''}
+            ${r.industry ? `<span class="tag tag-type" style="flex-shrink:0">${esc(r.industry)}</span>` : ''}
           </div>
-          <div class="cs-card-tags">
-            ${r.product  ? `<span class="tag tag-segment">${esc(r.product)}</span>` : ''}
-            ${segLabel   ? `<span class="tag tag-persona">${esc(segLabel)}</span>` : ''}
+          ${metaItems ? `<div class="cs-card-tags">${metaItems}</div>` : ''}
+          <div class="cs-sections">
+            ${r.challenge ? `<div class="cs-section"><div class="cs-section-label">Challenge</div><div class="cs-section-text">${esc(r.challenge)}</div></div>` : ''}
+            ${r.solution  ? `<div class="cs-section"><div class="cs-section-label">Solution</div><div class="cs-section-text">${esc(r.solution)}</div></div>` : ''}
+            ${r.results   ? `<div class="cs-section cs-results"><div class="cs-section-label">Results</div><div class="cs-section-text">${esc(r.results)}</div></div>` : ''}
           </div>
-          ${painList ? `<div class="cs-pain-points"><h4>Pain points</h4><ul>${painList}</ul></div>` : ''}
-          ${r.snippet ? `<div class="cs-snippet">${esc(r.snippet)}…</div>` : ''}
+          ${quoteBlock}
         </div>`;
     }).join('');
   }

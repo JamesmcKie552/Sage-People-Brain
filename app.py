@@ -87,6 +87,16 @@ def search():
     return jsonify({"results": results})
 
 
+def _load_case_study_library() -> list:
+    """Load pre-generated structured case study data from JSON file."""
+    import json
+    from pathlib import Path
+    path = Path(__file__).parent / "static" / "case_studies.json"
+    if not path.exists():
+        return []
+    return json.loads(path.read_text())
+
+
 @app.route("/api/case-studies", methods=["POST"])
 def case_studies():
     data = request.get_json() or {}
@@ -94,53 +104,45 @@ def case_studies():
     product = data.get("product", "").strip()   # "HCM" or "Payroll"
     segment = data.get("segment", "").strip()   # "enterprise" or "mid_market"
 
-    # Broad default so "browse all" works without a query
-    search_query = query if query else "customer success HR transformation outcome results"
+    library = _load_case_study_library()
 
-    pinecone_filter = {"doc_type": {"$eq": "case_study"}}
+    # Apply product filter
+    if product:
+        library = [s for s in library if product.lower() in s.get("product", "").lower()]
+
+    # Apply segment filter via Pinecone metadata (look up each file_name's segment)
     if segment:
-        pinecone_filter = {"$and": [pinecone_filter, {"segment": {"$in": [segment, "all"]}}]}
+        pinecone_filter = {"$and": [
+            {"doc_type": {"$eq": "case_study"}},
+            {"segment": {"$in": [segment, "all"]}}
+        ]}
+        search_query = query if query else "customer success HR transformation outcome results"
+        matches = vs.search(get_embedding(search_query), top_k=50, filter=pinecone_filter)
+        valid_files = {(m.metadata or {}).get("file_name", "") for m in matches}
+        library = [s for s in library if s.get("file_name", "") in valid_files]
 
-    query_embedding = get_embedding(search_query)
-    matches = vs.search(query_embedding=query_embedding, top_k=50, filter=pinecone_filter)
+    if not query:
+        return jsonify({"results": library})
 
-    def parse_filename(fname):
-        stem = fname.replace(".pdf", "")
-        parts = [p.strip() for p in stem.split("\u2013")]  # em dash
-        return {
-            "company":  parts[0] if len(parts) > 0 else stem,
-            "industry": parts[1] if len(parts) > 1 else "",
-            "product":  parts[2] if len(parts) > 2 else "",
-        }
-
-    # Deduplicate by file_name, keeping highest-scoring chunk per case study
-    seen: dict = {}
+    # Semantic ranking: use Pinecone to score and reorder
+    pinecone_filter = {"doc_type": {"$eq": "case_study"}}
+    matches = vs.search(get_embedding(query), top_k=50, filter=pinecone_filter)
+    score_by_file: dict = {}
     for m in matches:
         fname = (m.metadata or {}).get("file_name", "")
-        if fname not in seen or m.score > seen[fname]["score"]:
-            parsed = parse_filename(fname)
-            seen[fname] = {
-                "company":    parsed["company"],
-                "industry":   parsed["industry"],
-                "product":    parsed["product"],
-                "segment":    (m.metadata or {}).get("segment", ""),
-                "pain_points": (m.metadata or {}).get("pain_points", []),
-                "snippet":    ((m.metadata or {}).get("text", ""))[:300].strip(),
-                "file_name":  fname,
-                "score":      m.score,
-            }
+        if fname not in score_by_file or m.score > score_by_file[fname]:
+            score_by_file[fname] = m.score
 
-    results = sorted(seen.values(), key=lambda x: x["score"], reverse=True)
+    # Assign scores and sort; unscored stories go to the end
+    scored = []
+    for s in library:
+        s["_score"] = score_by_file.get(s.get("file_name", ""), 0.0)
+        scored.append(s)
+    scored.sort(key=lambda x: x["_score"], reverse=True)
+    for s in scored:
+        s.pop("_score", None)
 
-    # Post-filter by product if requested
-    if product:
-        results = [r for r in results if product.lower() in r["product"].lower()]
-
-    # Don't expose score to the frontend
-    for r in results:
-        del r["score"]
-
-    return jsonify({"results": results})
+    return jsonify({"results": scored})
 
 
 @app.route("/api/battlecard", methods=["POST"])

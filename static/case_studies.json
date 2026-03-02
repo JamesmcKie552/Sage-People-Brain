@@ -1,0 +1,272 @@
+[
+  {
+    "challenge": "Achilles needed to standardize communications across its global network of 22 offices and move away from manual Excel spreadsheet processes. The company required a system capable of automatically generating personalized emails in different languages while maintaining data integrity and transparency for audit purposes.",
+    "solution": "Achilles implemented Sage People as a central data system to enable transparent reporting and personalized communications. The platform's self-service functionality empowered employees to own and update their personal information, while automated communications tools allowed HR to announce policies, manage benefits, post job vacancies internally and externally, and generate personalized salary review letters across 17 territories.",
+    "results": "Achilles now generates personalized communications and reports with a single click, saving approximately two days of HR time annually on salary review letters. The platform automated reporting for headcount, payroll, employee information, and attrition data, while improved visibility and transparency strengthened the company's audit track record. Self-service functions reduced HR administrative burden, allowing the team to focus on strategic priorities.",
+    "quote": {
+      "text": "Sage People helps us to communicate more effectively in a timely manner which can be tracked and recorded direct to targeted recipients.",
+      "name": "Isobel Davies",
+      "title": "Head of HR",
+      "company": "Achilles"
+    },
+    "company_size": "500+ employees across 22 offices",
+    "country": "United Kingdom",
+    "file_name": "Bango – Technology – HCM – Scaling HR to support global expansion.pdf",
+    "company": "Bango",
+    "industry": "Technology",
+    "product": "HCM",
+    "tagline": "Scaling HR to support global expansion"
+  },
+  {
+    "challenge": "After acquiring Docomo Digital, Bango's workforce doubled to 250 employees across 15 countries, but the combined organization faced fragmented HR systems that neither could support the expanded, multinational operation. The company struggled with slow, inconsistent reporting, manual offboarding processes prone to human error, and a UK-focused HR system that couldn't handle country-specific compliance requirements across multiple regions.",
+    "solution": "Bango implemented Sage People for its global capabilities, automation, and robust reporting functionality, completing the first phase of core HR functions in just four months. The platform unified HR processes across all countries, automated employee onboarding and permissions through Microsoft Azure integration, and provided real-time dashboards for workforce planning and compliance management.",
+    "results": "Bango achieved a 12.5% reduction in HR administrative workload, unified HR processes across 12 countries, and automated key processes including employee onboarding and access permissions. The organization now has real-time reporting capabilities for better decision-making, strengthened security and compliance, and a scalable, future-proof HR system supporting its global workforce.",
+    "quote": {
+      "text": "Sage People is an enabler. It lets us work smarter and scale faster.",
+      "name": "Constance Droubay",
+      "title": "Chief People Officer",
+      "company": "Bango"
+    },
+    "company_size": "250 employees",
+    "country": "United Kingdom",
+    "file_name": "Channel 4 – Media & Broadcasting – HCM – Modernising HR for a complex workforce.pdf",
+    "company": "Channel 4",
+    "industry": "Media & Broadcasting",
+    "product": "HCM",
+    "tagline": "Modernising HR for a complex workforce"
+  },
+  {
+    "challenge": "Channel Four operated nine disparate HR systems across multiple UK sites, making it extremely difficult to extract and consolidate data for diversity reporting to OFCOM. The legacy systems lacked user-friendly interfaces, required analysts to manually compile reports which took weeks, and poor employee access to self-service HR information caused disengagement and repeated re-education efforts.",
+    "solution": "Channel Four implemented Sage People as a single, unified HR system that consolidated all nine legacy systems into one integrated platform. The implementation included a phased 8-month approach with configuration, testing, and employee training through instructional videos, enabling clean data consolidation and self-service capabilities for employees and line managers.",
+    "results": "Channel Four achieved a single HR system delivering clean data and quick reporting on diversity targets, empowered employees and managers with self-service HR information access, and enabled the HR team to shift from operational tasks to strategic work. The tailored, location-specific system now supports engagement across multi-regional, highly-skilled employees.",
+    "quote": {
+      "text": "Sage People did an amazing job. They had 15 minutes with our new chief HR officer and they were able to demonstrate that the product was quick, it was nimble and that it was flexible to our needs, especially as we were going through a number of changes as an organization.",
+      "name": "Gaynor Bailey",
+      "title": "HR Program and Operations Manager",
+      "company": "Channel Four"
+    },
+    "company_size": "1,000 employees",
+    "country": "United Kingdom",
+    "file_name": "Daniel Wellington – Retail – HCM – Scaling HR for a global workforce.pdf",
+    "company": "Daniel Wellington",
+    "industry": "Retail",
+    "product": "HCM",
+    "tagline": "Scaling HR for a global workforce"
+  },
+  {
+    "challenge": "Daniel Wellington experienced rapid growth from 200 employees in 2014 to over 2000 by 2018 across multiple global locations, making it difficult to maintain visibility of the workforce. All HR processes were manual and spreadsheet-based, causing simple tasks like checking total headcount to require two days and be prone to inaccuracies, with siloed information across departments.",
+    "solution": "Daniel Wellington implemented Sage People in 2017 as a centralized, configurable single source of truth for all HR data. The system allowed the HR team to store employee records in one central location with accurate, up-to-date information and the flexibility to configure workflows to match Daniel Wellington's specific processes across global offices.",
+    "results": "Reporting was streamlined from two days to just a few clicks, and the company gained complete visibility of its global workforce across 24 countries. Managers can now pull department reports in minutes instead of hours or days, and the monthly global payroll process was significantly reduced, while onboarding became smoother through automation and system integration.",
+    "quote": {
+      "text": "Sage People instantly allowed us to store all our employee records in one central place and ensured we had accurate, up-to-date data. It was important we had a solution we could adapt to our way of working.",
+      "name": "Bashar Jirges",
+      "title": "HR Digitalisation Specialist",
+      "company": "Daniel Wellington"
+    },
+    "company_size": "1700 employees",
+    "country": "Sweden",
+    "file_name": "Domino Printing Sciences – Technology – HCM – Gaining visibility across global HR operations.pdf",
+    "company": "Domino Printing Sciences",
+    "industry": "Technology",
+    "product": "HCM",
+    "tagline": "Gaining visibility across global HR operations"
+  },
+  {
+    "challenge": "Domino had almost 3,000 employees with no company-wide HR system, forcing the HR Director to manually contact every office to collect employee data, headcount figures, and salary changes. Data wasn't standardized as each country used their own format and process, making it a time-consuming and error-prone task to maintain accurate employee information.",
+    "solution": "Domino implemented Sage People, a cloud-based HR system built on the Salesforce platform, using a phased approach. The solution was highly configurable without coding, allowing Domino to tailor the system to their organization structure, set up automated workflows, and consolidate all regional employee data into a single secure cloud-based source of truth.",
+    "results": "HR administration was reduced by 25%-30%, with headcount reports now compilable in a couple of clicks instead of days. Domino gained full workforce visibility with accurate real-time people data, improved employee engagement through a recognition feature that generated over 700 messages (20% of workforce), and enabled HR leaders to focus on strategic initiatives like building data-driven talent strategies.",
+    "quote": {
+      "text": "We are now able to analyse our employee base, in various ways, to build data-driven strategies. We can also track progression, globally.",
+      "name": "Chris Webb",
+      "title": "Group HR Director",
+      "company": "Domino Printing Sciences"
+    },
+    "company_size": "3,000 employees",
+    "country": "United Kingdom",
+    "file_name": "Gett – Technology & Software – HCM – Streamlining global HR processes.pdf",
+    "company": "Gett",
+    "industry": "Technology & Software",
+    "product": "HCM",
+    "tagline": "Streamlining global HR processes"
+  },
+  {
+    "challenge": "As Gett expanded into new markets globally, its current HR processes and systems were not sustainable for long-term growth. The company needed a flexible HR platform that could support both global and local needs across multiple countries, while managing additional employee data for new programs like flexible work arrangements.",
+    "solution": "Gett implemented Sage People, a cloud-based HR platform built on Salesforce, which could be customized and adapted directly by internal teams without relying on external consultants. The solution integrated seamlessly with Okta, IT systems, and other HR tools, and enabled Gett to create custom fields and configure HR procedures specific to their culture and geography.",
+    "results": "Sage People streamlined onboarding and offboarding with automated emails, reduced the time to compile core reports from weeks to days, and provided a single source of truth for all HR and people data across the organization. The implementation was completed quickly with strong ROI due to system simplicity and cost effectiveness.",
+    "quote": {
+      "text": "Sage People has become our master people data index. It is much easier to manage all of our data within Sage People than previous systems and processes we have used; it is reliable and gives us more control.",
+      "name": "Keren Bizan",
+      "title": "Global Organizational Design and HR Manager",
+      "company": "Gett"
+    },
+    "company_size": "",
+    "country": "United Kingdom",
+    "file_name": "HCM & Payroll - Customer Wins.pdf",
+    "company": "HCM & Payroll",
+    "industry": "Customer Wins",
+    "product": "",
+    "tagline": ""
+  },
+  {
+    "challenge": "Purmo Group had spent over 50 years expanding and acquiring companies, resulting in multiple different approaches to HR administration across regions and sites. With new leadership and stock exchange flotation imminent, the company lacked a unified global HR management system and struggled with inconsistent HR data and processes across its 24 countries of operation.",
+    "solution": "Purmo Group conducted a tendering process and selected Sage People to unify HR management across multiple regions and sites. The company spent several months planning and preparing for implementation, bringing in consultants to ensure accurate and consistent data entry, and launched the system in September 2021 as 'PG People' with gradual rollout of functionality including self-service elements like online leave booking and training.",
+    "results": "HR reports that previously took several hours are now immediate, the company now has consistent and accurate data to inform business decisions, and automation of routine tasks has released staff time. The reporting and data aggregation functionalities were invaluable in the run-up to the company's 2022 stock exchange flotation, and the system was successfully launched even at unionised sites due to strong data protection capabilities.",
+    "quote": {
+      "text": "Sage People gives us access to business data in ways we never had before.",
+      "name": "Helen Duke",
+      "title": "HR Manager for the UK, Ireland and US",
+      "company": "Purmo Group"
+    },
+    "company_size": "More than 3,000 employees",
+    "country": "Finland",
+    "file_name": "SDL – Business Services – HCM – Scaling HR across multiple countries.pdf",
+    "company": "SDL",
+    "industry": "Business Services",
+    "product": "HCM",
+    "tagline": "Scaling HR across multiple countries"
+  },
+  {
+    "challenge": "SDL operated multiple HR systems across different countries with no integration, resulting in inconsistent processes and manual, paper-based HR operations. With rapid global expansion and M&A activity, the company struggled to manage HR for 3,000 employees across multiple regions, and it could take up to three days to determine headcount in a single division.",
+    "solution": "SDL implemented Sage People as a centralized, global HR solution that unified HR operations across all regions and languages. The company also integrated Payflow, a data aggregator, to automatically access critical HR information such as salaries and headcounts across all operating regions without manual intervention.",
+    "results": "SDL established a single, centralized HR system for over 3,000 employees with quick implementation in approximately one week, compared to competitors quoting 18-24 months. The solution reduced manual administrative tasks and reporting, freeing the HR team to focus on strategy and employee consultation, with reports for the board now producible daily at the touch of a button.",
+    "quote": {
+      "text": "Other suppliers offered SaaS tools, but were quoting timescales of 18 to 24 months for delivery, while Sage said it could switch on in a week.",
+      "name": "Paul Harris",
+      "title": "Global Business Applications Director",
+      "company": "SDL"
+    },
+    "company_size": "3,000 employees",
+    "country": "United Kingdom",
+    "file_name": "Spencer Ogden - Business Services - HCM - Manual HR Reporting & Admin Overhead.pdf",
+    "company": "Spencer Ogden",
+    "industry": "Business Services",
+    "product": "HCM",
+    "tagline": "Manual HR Reporting & Admin Overhead"
+  },
+  {
+    "challenge": "Spencer Ogden's existing processes and office systems couldn't keep up with the company's rapid growth across 400 staff and 12 sites. The HR team spent 30-40% of their time on manual administrative tasks and reporting, and the ratio of HR staff to employees (1:60) was becoming unsustainable as the business expanded internationally.",
+    "solution": "Spencer Ogden implemented Sage People, a configurable HRIS solution that automated routine HR tasks like headcount reporting and holiday administration. The system provided mobile self-service capabilities for employees and generated instant, accurate reports that previously took hours or days.",
+    "results": "Sage People freed up to 40% of HR time previously spent on manual admin and reporting, improved the HR-to-employee ratio from 1:60 to 1:70, and enabled the HR team to focus on value-added tasks. The solution is also scalable and adaptable to international legal requirements, with the company currently using only 20% of its potential capability.",
+    "quote": {
+      "text": "It's also adapted well to fit Spencer Ogden's particular needs. It's a configurable solution without a bespoke price tag.",
+      "name": "Donna Hewett",
+      "title": "Operations Director",
+      "company": "Spencer Ogden"
+    },
+    "company_size": "400 employees",
+    "country": "United Kingdom",
+    "file_name": "Tenth Revolution Group – Business Services – HCM – Supporting rapid international growth.pdf",
+    "company": "Tenth Revolution Group",
+    "industry": "Business Services",
+    "product": "HCM",
+    "tagline": "Supporting rapid international growth"
+  },
+  {
+    "challenge": "Tenth Revolution Group was experiencing rapid growth, hiring over 100 people per month, but lacked a centralized HR system. Employee data was stored separately across 21 global offices with no dashboards or automated reporting, making everything manual and segmented.",
+    "solution": "The company implemented Sage People, a cloud-based HR system built on Salesforce that provides a single secure source of truth for employee data globally. The platform enabled automated reporting, self-service functionality for employees, and multinational workforce management capabilities.",
+    "results": "Onboarding time was reduced from 2 hours per employee to less than 10 minutes, saving the HR team one day per week (approximately 200 hours monthly). Automated reporting halved time spent on data and analytics, and the platform's real-time data doubled HR team productivity, enabling focus on strategic initiatives.",
+    "quote": {
+      "text": "Sage People has been a godsend. Without automation, we would have had to drastically increase our service desk function within the IT operations team just to handle the joiners, movers, and leavers.",
+      "name": "Anthony Cummings",
+      "title": "Director of Infrastructure and Operations",
+      "company": "Tenth Revolution Group"
+    },
+    "company_size": "2,000 employees",
+    "country": "United Kingdom",
+    "file_name": "Truphone - Technology & Software - HCM - Manual Processes & No Performance Management System.pdf",
+    "company": "Truphone",
+    "industry": "Technology & Software",
+    "product": "HCM",
+    "tagline": "Manual Processes & No Performance Management System"
+  },
+  {
+    "challenge": "Truphone struggled to manage HR and people processes across 10+ countries with spreadsheets as the company doubled its employee numbers. The manual nature of existing systems made it nearly impossible to onboard and offboard employees quickly, had negative financial impact, and lacked any performance management capability for 400 employees sending in documents manually.",
+    "solution": "Truphone implemented Sage People, a cloud-based HR and people management system that could handle global policies and processes. The company went live in less than four months after signing the contract, enabling centralized employee data management, automated payroll processing, and integrated performance management.",
+    "results": "Sage People enabled Truphone to successfully hire 84 new employees in a single month while maintaining smooth onboarding processes. The system freed up the HR team to be more strategic, provided crucial performance tracking and organizational modeling capabilities, and empowered managers and employees with self-serve data access that improved decision-making.",
+    "quote": {
+      "text": "When we grew to ten countries, we doubled employee numbers. Trying to manage that size population on spreadsheets was becoming nigh on impossible.",
+      "name": "Corina Holmes",
+      "title": "HR Director",
+      "company": "Truphone"
+    },
+    "company_size": "400 employees",
+    "country": "UK",
+    "file_name": "Trustpilot - Technology & Software - HCM - Lack of Centralised HR System.pdf",
+    "company": "Trustpilot",
+    "industry": "Technology & Software",
+    "product": "HCM",
+    "tagline": "Lack of Centralised HR System"
+  },
+  {
+    "challenge": "In 2015, Trustpilot was rapidly expanding with 350 employees across four global locations but lacked a centralized People system. All HR processes including tracking headcount, employee time, reporting, onboarding, offboarding, and performance reviews were done manually, consuming hours each month across different regions.",
+    "solution": "Trustpilot implemented Sage People, a cloud-based global HR system that enabled them to operate both globally and locally from a single secure system of record. The platform was configured to support multiple currencies, regional compliance requirements, and automated workflows for onboarding, offboarding, and reporting.",
+    "results": "Trustpilot achieved significant operational improvements: onboarding time reduced from 90 minutes to 30 minutes per new hire (saving 10,000 hours in the first four months of 2021 when hiring 170 people), offboarding time more than halved, and automated reporting now saves six hours per month. The company also gained one source of truth for real-time people data across all global locations.",
+    "quote": {
+      "text": "With growth and expansion, we needed to scale up our HR and People system. We needed a place not only to store all of our growing data, but also to automate and streamline our processes globally.",
+      "name": "Amalie Lange",
+      "title": "Head of People Data and Analytics",
+      "company": "Trustpilot"
+    },
+    "company_size": "730 employees",
+    "country": "UK and Global",
+    "file_name": "Urban Pubs & Bars – Hospitality – Payroll – Managing complex payroll at scale.pdf",
+    "company": "Urban Pubs & Bars",
+    "industry": "Hospitality",
+    "product": "Payroll",
+    "tagline": "Managing complex payroll at scale"
+  },
+  {
+    "company": "CPM International",
+    "industry": "Business Services",
+    "product": "HCM",
+    "company_size": "2,000 employees",
+    "country": "Global",
+    "challenge": "CPM was operating with IRIS and multiple disconnected systems across locations without a single source of truth. The setup was unreliable, not scalable, and lacked integration capabilities. Frequent system outages disrupted payroll and HR functions, creating inefficiencies and administrative burdens.",
+    "solution": "Sage People was selected for its strong HR transformation capabilities, mobile-first design, powerful automation, and reliable cloud-based architecture. The unified platform provides better visibility, control, and scalability while meeting GDPR compliance requirements.",
+    "results": "The unified platform reduces manual intervention and improves workforce user experience with mobile accessibility for field employees. The system meets compliance regulations while reducing operational and payroll risks through clear SLAs and better data management.",
+    "quote": {
+      "text": "",
+      "name": "",
+      "title": "",
+      "company": "CPM International"
+    },
+    "file_name": "Purmo Group – Manufacturing – HCM – Unifying HR systems.pdf",
+    "tagline": "Unifying HR systems"
+  },
+  {
+    "company": "Silverstone Circuits",
+    "industry": "Leisure & Events",
+    "product": "HCM",
+    "company_size": "430 employees",
+    "country": "United Kingdom",
+    "challenge": "Silverstone faced high manual effort across HR and Payroll with heavy spreadsheet reliance and limited reporting. Multiple disjointed systems lacked cohesion and poor vendor support hindered their ability to support 5-8% annual growth.",
+    "solution": "Sage People was selected for its high functionality, user-friendly design, and integration capabilities. The team valued the partnership approach and Sage's flexibility to adapt to their unique operational needs across multiple business lines.",
+    "results": "The platform provides a cohesive experience across all employee types with improved reporting and analytics. The scalable solution supports business growth and expansion into new business lines including karting and experiences.",
+    "quote": {
+      "text": "",
+      "name": "",
+      "title": "",
+      "company": "Silverstone Circuits"
+    },
+    "file_name": "Purmo Group – Manufacturing – HCM – Unifying HR systems.pdf",
+    "tagline": "Unifying HR systems"
+  },
+  {
+    "company": "Onecom",
+    "industry": "Technology",
+    "product": "HCM",
+    "company_size": "850 employees",
+    "country": "United Kingdom",
+    "challenge": "Onecom's existing Cezanne system lacked scalability for their 850-employee headcount and performed poorly for their India-based workforce. There was no integration between HR and payroll, resulting in manual processes and insufficient reporting.",
+    "solution": "Sage People was chosen for its scalability across territories, flexible reporting, and integration with TeamTailor ATS for automated data flow from recruitment through core HR and performance management.",
+    "results": "The implementation enables talent mapping and succession planning tailored to Onecom's methodology. Improved analytics support strategic decision-making while ATS integration automates recruitment processes and data flow.",
+    "quote": {
+      "text": "",
+      "name": "",
+      "title": "",
+      "company": "Onecom"
+    },
+    "file_name": "Purmo Group – Manufacturing – HCM – Unifying HR systems.pdf",
+    "tagline": "Unifying HR systems"
+  }
+]
