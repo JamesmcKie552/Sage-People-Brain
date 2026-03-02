@@ -736,6 +736,9 @@
     .cs-quote { background: #F5F5F5; border-left: 3px solid #00D639; padding: 12px 14px; border-radius: 0 6px 6px 0; }
     .cs-quote-text { font-size: 0.9rem; color: #222; line-height: 1.5; font-style: italic; }
     .cs-quote-attr { font-size: 0.78rem; color: #666; margin-top: 6px; font-weight: 500; }
+    .cs-card-footer { padding-top: 2px; }
+    .cs-download-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 0.8rem; font-weight: 600; color: #1E72BE; text-decoration: none; }
+    .cs-download-btn:hover { text-decoration: underline; }
     @media (max-width: 680px) {
       .cs-controls { padding: 16px; }
       .cs-grid { padding: 16px; grid-template-columns: 1fr; }
@@ -953,6 +956,7 @@
             ${r.results   ? `<div class="cs-section cs-results"><div class="cs-section-label">Results</div><div class="cs-section-text">${esc(r.results)}</div></div>` : ''}
           </div>` : ''}
           ${quoteBlock}
+          ${r.file_name ? `<div class="cs-card-footer"><a class="cs-download-btn" href="/case-study-pdf/${encodeURIComponent(r.file_name)}" download>&#8595; Download PDF</a></div>` : ''}
         </div>`;
     }).join('');
   }

@@ -46,7 +46,7 @@ CHUNK_OVERLAP = 150  # tokens of overlap between chunks so context isn't lost
 
 # Maps each subfolder name to the doc_type metadata value
 FOLDER_TO_DOC_TYPE = {
-    "Case Studies":       "case_study",
+    "Case Studies (2)":   "case_study",
     "Competitor Analysis": "competitor",
     "ICP & Personas":     "icp_persona",
     "Market Context":     "market_context",
@@ -156,6 +156,15 @@ Guidelines:
         print(f"  ⚠️  Could not parse Claude's response for {filename}, using defaults")
         return {"segment": "all", "pain_points": [], "persona": "all"}
 
+
+def extract_metadata_safe(text: str, doc_type: str, filename: str) -> dict:
+    """Wrapper that falls back to defaults if Claude API is unavailable."""
+    try:
+        return extract_metadata(text, doc_type, filename)
+    except Exception as e:
+        print(f"  ⚠️  Claude unavailable ({type(e).__name__}), using default metadata")
+        return {"segment": "all", "pain_points": [], "persona": "all"}
+
 # ─── Step 4: Generate embedding ───────────────────────────────────────────────
 
 def get_embedding(text: str) -> list[float]:
@@ -183,7 +192,7 @@ def ingest_document(pdf_path: Path, doc_type: str, dry_run: bool = False) -> int
 
     # 2. Claude metadata (once per document — not per chunk)
     print(f"  🤖  Asking Claude to tag metadata...")
-    meta = extract_metadata(text, doc_type, filename)
+    meta = extract_metadata_safe(text, doc_type, filename)
     print(f"  ✅  segment={meta['segment']}  persona={meta['persona']}")
     if meta["pain_points"]:
         print(f"       pain points: {', '.join(meta['pain_points'][:3])}")

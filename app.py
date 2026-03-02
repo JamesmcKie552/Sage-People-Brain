@@ -11,7 +11,8 @@ import uuid
 import threading
 import anthropic
 from datetime import date
-from flask import Flask, render_template, request, jsonify
+from pathlib import Path
+from flask import Flask, render_template, request, jsonify, send_from_directory
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -95,6 +96,14 @@ def _load_case_study_library() -> list:
     if not path.exists():
         return []
     return json.loads(path.read_text())
+
+
+CASE_STUDIES_DIR = Path(__file__).parent / "Case Studies (2)"
+
+
+@app.route("/case-study-pdf/<path:filename>")
+def case_study_pdf(filename):
+    return send_from_directory(CASE_STUDIES_DIR, filename, as_attachment=True)
 
 
 @app.route("/api/case-studies", methods=["POST"])
