@@ -14,8 +14,8 @@
       "title": "",
       "company": "Achilles"
     },
-    "file_name": "Bango \u2013 Technology \u2013 HCM \u2013 Scaling HR to support global expansion.pdf",
-    "tagline": "Scaling HR to support global expansion"
+    "file_name": "Achilles \u2013 Risk & Compliance Services \u2013 HCM \u2013 Improving HR visibility and control.pdf",
+    "tagline": "Improving HR visibility and control"
   },
   {
     "company": "Bango",
@@ -32,8 +32,8 @@
       "title": "",
       "company": "Bango"
     },
-    "file_name": "Channel 4 \u2013 Media & Broadcasting \u2013 HCM \u2013 Modernising HR for a complex workforce.pdf",
-    "tagline": "Modernising HR for a complex workforce"
+    "file_name": "Bango \u2013 Technology \u2013 HCM \u2013 Scaling HR to support global expansion.pdf",
+    "tagline": "Scaling HR to support global expansion"
   },
   {
     "company": "Channel 4",
@@ -50,8 +50,8 @@
       "title": "",
       "company": "Channel 4"
     },
-    "file_name": "Daniel Wellington \u2013 Retail \u2013 HCM \u2013 Scaling HR for a global workforce.pdf",
-    "tagline": "Scaling HR for a global workforce"
+    "file_name": "Channel 4 \u2013 Media & Broadcasting \u2013 HCM \u2013 Modernising HR for a complex workforce.pdf",
+    "tagline": "Modernising HR for a complex workforce"
   },
   {
     "company": "Daniel Wellington",
@@ -68,8 +68,8 @@
       "title": "",
       "company": "Daniel Wellington"
     },
-    "file_name": "Domino Printing Sciences \u2013 Technology \u2013 HCM \u2013 Gaining visibility across global HR operations.pdf",
-    "tagline": "Gaining visibility across global HR operations"
+    "file_name": "Daniel Wellington \u2013 Retail \u2013 HCM \u2013 Scaling HR for a global workforce.pdf",
+    "tagline": "Scaling HR for a global workforce"
   },
   {
     "company": "Domino Printing Sciences",
@@ -86,8 +86,8 @@
       "title": "",
       "company": "Domino Printing Sciences"
     },
-    "file_name": "Gett \u2013 Technology & Software \u2013 HCM \u2013 Streamlining global HR processes.pdf",
-    "tagline": "Streamlining global HR processes"
+    "file_name": "Domino Printing Sciences \u2013 Technology \u2013 HCM \u2013 Gaining visibility across global HR operations.pdf",
+    "tagline": "Gaining visibility across global HR operations"
   },
   {
     "company": "Gett",
@@ -104,8 +104,8 @@
       "title": "",
       "company": "Gett"
     },
-    "file_name": "HCM & Payroll - Customer Wins.pdf",
-    "tagline": ""
+    "file_name": "Gett \u2013 Technology & Software \u2013 HCM \u2013 Streamlining global HR processes.pdf",
+    "tagline": "Streamlining global HR processes"
   },
   {
     "company": "Purmo Group",
@@ -122,8 +122,8 @@
       "title": "HR Manager for the UK, Ireland and US",
       "company": "Purmo Group"
     },
-    "file_name": "SDL \u2013 Business Services \u2013 HCM \u2013 Scaling HR across multiple countries.pdf",
-    "tagline": "Scaling HR across multiple countries"
+    "file_name": "Purmo Group \u2013 Manufacturing \u2013 HCM \u2013 Unifying HR systems.pdf",
+    "tagline": "Unifying HR systems"
   },
   {
     "company": "SDL",
@@ -140,8 +140,8 @@
       "title": "",
       "company": "SDL"
     },
-    "file_name": "Spencer Ogden - Business Services - HCM - Manual HR Reporting & Admin Overhead.pdf",
-    "tagline": "Manual HR Reporting & Admin Overhead"
+    "file_name": "SDL \u2013 Business Services \u2013 HCM \u2013 Scaling HR across multiple countries.pdf",
+    "tagline": "Scaling HR across multiple countries"
   },
   {
     "company": "Spencer Ogden",
@@ -158,8 +158,8 @@
       "title": "Operations Director",
       "company": "Spencer Ogden"
     },
-    "file_name": "Tenth Revolution Group \u2013 Business Services \u2013 HCM \u2013 Supporting rapid international growth.pdf",
-    "tagline": "Supporting rapid international growth"
+    "file_name": "Spencer Ogden - Business Services - HCM - Manual HR Reporting & Admin Overhead.pdf",
+    "tagline": "Manual HR Reporting & Admin Overhead"
   },
   {
     "company": "Tenth Revolution Group",
@@ -176,8 +176,8 @@
       "title": "",
       "company": "Tenth Revolution Group"
     },
-    "file_name": "Truphone - Technology & Software - HCM - Manual Processes & No Performance Management System.pdf",
-    "tagline": "Manual Processes & No Performance Management System"
+    "file_name": "Tenth Revolution Group \u2013 Business Services \u2013 HCM \u2013 Supporting rapid international growth.pdf",
+    "tagline": "Supporting rapid international growth"
   },
   {
     "company": "Truphone",
@@ -193,6 +193,24 @@
       "name": "Corina Holmes",
       "title": "HR Director",
       "company": "Truphone"
+    },
+    "file_name": "Truphone - Technology & Software - HCM - Manual Processes & No Performance Management System.pdf",
+    "tagline": "Manual Processes & No Performance Management System"
+  },
+  {
+    "company": "Trustpilot",
+    "industry": "Technology & Software",
+    "product": "HCM",
+    "company_size": "730 employees",
+    "country": "UK and Global",
+    "challenge": "Trustpilot\u2019s rapid international growth \u2014 including hiring 170 people in the first four months of 2021 alone \u2014 exposed the limits of its legacy HR system. With 730 employees across eight global offices, the company needed a scalable cloud HR platform to support consistent onboarding and real-time people data management.",
+    "solution": "Sage People automated Trustpilot\u2019s onboarding and offboarding processes, reducing time-to-onboard by over 50% and cutting offboarding time by more than half. A single global platform now provides all employees with a consistent experience regardless of region.",
+    "results": "\u2022 Time to offboard team members more than halved\n\u2022 Automated reporting saving six hours a month\n\u2022 Time to onboard new team members reduced by over 50%\n\u2022 One source of truth consolidating real-time people data globally",
+    "quote": {
+      "text": "",
+      "name": "",
+      "title": "",
+      "company": "Trustpilot"
     },
     "file_name": "Trustpilot - Technology & Software - HCM - Lack of Centralised HR System.pdf",
     "tagline": "Lack of Centralised HR System"
@@ -216,30 +234,12 @@
     "tagline": "Managing complex payroll at scale"
   },
   {
-    "company": "Trustpilot",
-    "industry": "Technology & Software",
-    "product": "HCM",
-    "company_size": "730 employees",
-    "country": "UK and Global",
-    "challenge": "Trustpilot\u2019s rapid international growth \u2014 including hiring 170 people in the first four months of 2021 alone \u2014 exposed the limits of its legacy HR system. With 730 employees across eight global offices, the company needed a scalable cloud HR platform to support consistent onboarding and real-time people data management.",
-    "solution": "Sage People automated Trustpilot\u2019s onboarding and offboarding processes, reducing time-to-onboard by over 50% and cutting offboarding time by more than half. A single global platform now provides all employees with a consistent experience regardless of region.",
-    "results": "\u2022 Time to offboard team members more than halved\n\u2022 Automated reporting saving six hours a month\n\u2022 Time to onboard new team members reduced by over 50%\n\u2022 One source of truth consolidating real-time people data globally",
-    "quote": {
-      "text": "",
-      "name": "",
-      "title": "",
-      "company": "Trustpilot"
-    },
-    "file_name": "Urban Pubs & Bars \u2013 Hospitality \u2013 Payroll \u2013 Managing complex payroll at scale.pdf",
-    "tagline": "Managing complex payroll at scale"
-  },
-  {
     "company": "CPM International",
     "industry": "Business Services",
     "product": "HCM",
     "company_size": "2,000 employees",
     "country": "Global",
-    "file_name": "Purmo Group \u2013 Manufacturing \u2013 HCM \u2013 Unifying HR systems.pdf",
+    "file_name": "HCM & Payroll - Customer Wins.pdf",
     "tagline": "",
     "challenge": "CPM was operating with IRIS and multiple disconnected systems across locations, with no single source of truth. Frequent outages disrupted payroll and HR functions, creating GDPR compliance risks and significant admin overload.",
     "solution": "Sage People was selected for its strong HR transformation capabilities, mobile-first design, powerful automation, reliable cloud architecture, and seamless integration with CPM\u2019s existing tech stack.",
@@ -257,7 +257,7 @@
     "product": "HCM",
     "company_size": "430 employees",
     "country": "United Kingdom",
-    "file_name": "Purmo Group \u2013 Manufacturing \u2013 HCM \u2013 Unifying HR systems.pdf",
+    "file_name": "HCM & Payroll - Customer Wins.pdf",
     "tagline": "",
     "challenge": "Silverstone faced high manual effort in HR and Payroll with heavy spreadsheet reliance, limited reporting capabilities, and multiple disjointed systems that couldn\u2019t support the company\u2019s 5\u20138% annual headcount growth.",
     "solution": "Sage People was selected for its high functionality, user-friendly design, and integration capabilities that adapt to Silverstone\u2019s unique needs across multiple business lines including racing, karting and experiences.",
@@ -275,7 +275,7 @@
     "product": "HCM",
     "company_size": "850 employees",
     "country": "United Kingdom",
-    "file_name": "Purmo Group \u2013 Manufacturing \u2013 HCM \u2013 Unifying HR systems.pdf",
+    "file_name": "HCM & Payroll - Customer Wins.pdf",
     "tagline": "",
     "challenge": "Onecom\u2019s existing Cezanne system lacked scalability for their 850-employee headcount, performed poorly for their India-based workforce, and had no HR-payroll integration \u2014 causing manual processes and poor reporting across the business.",
     "solution": "Sage People was chosen for its cross-territory scalability, flexible reporting, and integration with TeamTailor ATS for automated data flow from recruitment through to core HR, improving consistency from hire to employment.",
