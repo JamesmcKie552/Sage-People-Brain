@@ -207,14 +207,20 @@ def _run_battlecard(job_id: str, competitor: str, persona: str = ""):
             if _chunk.id not in _seen_ids:
                 _seen_ids.add(_chunk.id)
                 case_study_chunks.append(_chunk)
-        # Pull ICP/persona docs — these are almost never used currently
+        # Pull ICP/persona docs
         icp_chunks = vs.search(
             query_embedding=get_embedding(f"{persona_q} buyer persona ICP priorities pain points decision criteria"),
             top_k=3,
             filter={"doc_type": {"$eq": "icp_persona"}},
         )
+        # Pull product docs — features, capabilities, roadmap
+        product_chunks = vs.search(
+            query_embedding=get_embedding(f"Sage People HCM product features capabilities {persona_q} {competitor}"),
+            top_k=5,
+            filter={"doc_type": {"$eq": "product"}},
+        )
 
-        all_chunks = list(competitor_chunks) + list(messaging_chunks) + list(case_study_chunks) + list(icp_chunks)
+        all_chunks = list(competitor_chunks) + list(messaging_chunks) + list(case_study_chunks) + list(icp_chunks) + list(product_chunks)
         source_files = sorted({
             (m.metadata or {}).get("file_name", "")
             for m in all_chunks
@@ -224,6 +230,7 @@ def _run_battlecard(job_id: str, competitor: str, persona: str = ""):
         messaging_context  = chunks_to_text(messaging_chunks)
         case_study_context = chunks_to_text(case_study_chunks)
         icp_context        = chunks_to_text(icp_chunks)
+        product_context    = chunks_to_text(product_chunks)
         print(f"[battlecard:{job_id}] Step 2 done — {len(all_chunks)} chunks")
 
         # ── Step 3: Generate battle card ───────────────────────────────────────
@@ -258,6 +265,9 @@ Build a concise, honest battle card for competing against {competitor}. Every bu
 
 === SAGE PEOPLE MESSAGING & DIFFERENTIATORS (Knowledge Base) ===
 {messaging_context}
+
+=== PRODUCT CAPABILITIES (Knowledge Base) ===
+{product_context}
 
 === CUSTOMER PROOF POINTS (Knowledge Base) ===
 {case_study_context}
