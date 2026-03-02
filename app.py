@@ -178,6 +178,75 @@ def case_studies():
     return jsonify({"results": scored})
 
 
+@app.route("/api/ask", methods=["POST"])
+def ask():
+    """RAG endpoint: retrieve relevant chunks then generate a conversational answer with Claude."""
+    data = request.get_json()
+    query    = data.get("query", "").strip()
+    doc_type = data.get("doc_type")
+    segment  = data.get("segment")
+
+    if not query:
+        return jsonify({"error": "No query provided"}), 400
+
+    # Retrieve relevant chunks from Pinecone
+    pinecone_filter = {}
+    if doc_type:
+        pinecone_filter["doc_type"] = {"$eq": doc_type}
+    if segment:
+        pinecone_filter["segment"] = {"$in": [segment, "all"]}
+
+    matches = vs.search(
+        query_embedding=get_embedding(query),
+        top_k=8,
+        filter=pinecone_filter if pinecone_filter else None,
+    )
+
+    if not matches:
+        return jsonify({
+            "answer": "I couldn't find any relevant information in the knowledge base for that question.",
+            "sources": [],
+        })
+
+    # Build numbered context and deduplicated source list
+    context_parts = []
+    sources = []
+    seen_files = set()
+    for i, m in enumerate(matches):
+        meta = m.metadata or {}
+        file_name = meta.get("file_name", "")
+        context_parts.append(f"[{i+1}] From '{file_name}':\n{meta.get('text', '')}")
+        if file_name not in seen_files:
+            sources.append({
+                "file_name": file_name,
+                "doc_type":  meta.get("doc_type", ""),
+                "score":     round(m.score, 3),
+            })
+            seen_files.add(file_name)
+
+    context = "\n\n---\n\n".join(context_parts)
+
+    prompt = f"""You are a Sage People sales knowledge assistant. Sage People is a cloud HR and payroll platform for 200–5,000 employee organisations.
+
+Answer the following question using ONLY the provided knowledge base excerpts. Be conversational, specific, and directly useful to a sales professional. Where relevant, cite the source number like [1] or [2]. If the excerpts don't contain enough information to answer fully, say so honestly rather than guessing.
+
+QUESTION: {query}
+
+KNOWLEDGE BASE EXCERPTS:
+{context}"""
+
+    message = claude_client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=1000,
+        messages=[{"role": "user", "content": prompt}],
+    )
+
+    return jsonify({
+        "answer":  message.content[0].text.strip(),
+        "sources": sources,
+    })
+
+
 @app.route("/api/battlecard", methods=["POST"])
 def battlecard():
     """Kick off battle card generation in a background thread and return a job ID immediately."""

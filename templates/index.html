@@ -165,6 +165,18 @@
     .card-text { font-size: 0.875rem; line-height: 1.65; color: #333; border-top: 1px solid #f0f0f0; padding-top: 14px; }
     .card-text p { margin-bottom: 0.6em; }
     .card-text p:last-child { margin-bottom: 0; }
+    .answer-block { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 24px 28px; margin-bottom: 20px; }
+    .answer-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #00875a; margin-bottom: 14px; }
+    .answer-text { font-size: 0.925rem; line-height: 1.8; color: #222; }
+    .answer-text p { margin-bottom: 0.75em; }
+    .answer-text p:last-child { margin-bottom: 0; }
+    .answer-text ul, .answer-text ol { margin: 0.4em 0 0.8em 1.4em; }
+    .answer-text li { margin-bottom: 0.35em; }
+    .answer-text strong { font-weight: 600; color: #111; }
+    .sources-section { margin-top: 4px; }
+    .sources-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #999; margin-bottom: 10px; }
+    .source-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .source-pill { display: inline-flex; align-items: center; gap: 6px; background: #F7F7F7; border: 1px solid #E5E5E5; border-radius: 20px; padding: 4px 12px; font-size: 0.76rem; color: #555; }
 
     /* ── States ─────────────────────────────────────────────────────────────── */
     .empty-state { text-align: center; padding: 60px 20px; color: #999; }
@@ -775,20 +787,20 @@
 <div id="tab-search" class="tab-panel active">
   <div class="search-panel">
     <div class="search-row">
-      <input type="text" id="queryInput" placeholder="e.g. CHRO pain points in enterprise HR transformation" />
-      <button onclick="doSearch()">Search</button>
+      <input type="text" id="queryInput" placeholder="Ask anything — e.g. What are the main reasons customers choose Sage People over Workday?" />
+      <button onclick="doSearch()">Ask</button>
     </div>
     <div class="filters">
-      <label>Doc type
+      <label>Focus on
         <select id="filterType">
-          <option value="">All types</option>
-          <option value="case_study">Case Study</option>
+          <option value="">All knowledge</option>
+          <option value="case_study">Case Studies</option>
           <option value="competitor">Competitor Analysis</option>
           <option value="icp_persona">ICP &amp; Personas</option>
           <option value="market_context">Market Context</option>
           <option value="messaging">Messaging</option>
           <option value="product">Product</option>
-          <option value="report">Report</option>
+          <option value="report">Reports</option>
         </select>
       </label>
       <label>Segment
@@ -796,13 +808,6 @@
           <option value="">All segments</option>
           <option value="enterprise">Enterprise</option>
           <option value="mid_market">Mid-market</option>
-        </select>
-      </label>
-      <label>Results
-        <select id="filterTopK">
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="20">20</option>
         </select>
       </label>
     </div>
@@ -985,52 +990,76 @@
     document.getElementById('personaInput').addEventListener('keydown', e => { if (e.key==='Enter') doBattleCard(); });
   });
 
-  // ── Knowledge Search ───────────────────────────────────────────────────────
+  // ── Knowledge Search (RAG) ─────────────────────────────────────────────────
   function doSearch() {
     const query   = document.getElementById('queryInput').value.trim();
     const docType = document.getElementById('filterType').value;
     const segment = document.getElementById('filterSegment').value;
-    const topK    = parseInt(document.getElementById('filterTopK').value);
     const area    = document.getElementById('resultsArea');
     if (!query) return;
 
-    area.innerHTML = `<div class="loading"><div class="spinner"></div>Searching…</div>`;
+    area.innerHTML = `<div class="loading"><div class="spinner"></div>Thinking…</div>`;
 
-    fetch('/api/search', {
+    fetch('/api/ask', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query, doc_type: docType||null, segment: segment||null, top_k: topK })
+      body: JSON.stringify({ query, doc_type: docType||null, segment: segment||null })
     })
     .then(r => r.json())
     .then(data => {
       if (data.error) { area.innerHTML = `<div class="error-msg">Error: ${esc(data.error)}</div>`; return; }
-      const results = data.results;
-      if (!results.length) {
-        area.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><p>No results found. Try a different query.</p></div>`;
-        return;
-      }
-      let html = `<p class="results-count">${results.length} result${results.length!==1?'s':''} for "<strong>${esc(query)}</strong>"</p>`;
-      results.forEach(r => {
-        const painHtml = r.pain_points.length
-          ? `<div class="pain-points"><h4>Pain Points</h4><ul>${r.pain_points.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>` : '';
-        html += `
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">${esc(r.file_name)}</div>
-              <div class="score-badge">Score ${r.score}</div>
-            </div>
-            <div class="card-tags">
-              <span class="tag tag-type">${formatDocType(r.doc_type)}</span>
-              ${r.segment ? `<span class="tag tag-segment">${r.segment}</span>` : ''}
-              ${r.persona ? `<span class="tag tag-persona">${esc(r.persona)}</span>` : ''}
-            </div>
-            ${painHtml}
-            <div class="card-text">${r.text.split(/\n\n+/).map(p=>`<p>${esc(p.trim())}</p>`).join('')}</div>
-          </div>`;
-      });
-      area.innerHTML = html;
+
+      const sourcePills = (data.sources || []).map(s =>
+        `<div class="source-pill"><span class="tag tag-type" style="border-radius:20px;margin:0">${formatDocType(s.doc_type)}</span>${esc(s.file_name.replace(/\.pdf$/i,''))}</div>`
+      ).join('');
+
+      area.innerHTML = `
+        <div class="answer-block">
+          <div class="answer-label">Answer</div>
+          <div class="answer-text">${renderAnswer(data.answer)}</div>
+        </div>
+        ${sourcePills ? `<div class="sources-section"><div class="sources-label">Sources used</div><div class="source-pills">${sourcePills}</div></div>` : ''}`;
     })
     .catch(() => { area.innerHTML = `<div class="error-msg">Something went wrong. Is the server running?</div>`; });
+  }
+
+  function renderAnswer(text) {
+    // Convert Claude's markdown-ish output to safe HTML
+    const lines = text.split('\n');
+    const out = [];
+    let listBuf = [], listType = null;
+
+    function flushList() {
+      if (!listBuf.length) return;
+      const tag = listType === 'ol' ? 'ol' : 'ul';
+      out.push(`<${tag}>${listBuf.map(l=>`<li>${l}</li>`).join('')}</${tag}>`);
+      listBuf = []; listType = null;
+    }
+
+    function fmt(s) {
+      return s
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+        .replace(/\[(\d+)\]/g,'<sup class="src-ref">[$1]</sup>');
+    }
+
+    for (const raw of lines) {
+      const line = raw.trimEnd();
+      const bullet = line.match(/^[-•*]\s+(.*)/);
+      const numbered = line.match(/^\d+\.\s+(.*)/);
+      if (bullet) {
+        if (listType === 'ol') flushList();
+        listType = 'ul'; listBuf.push(fmt(bullet[1]));
+      } else if (numbered) {
+        if (listType === 'ul') flushList();
+        listType = 'ol'; listBuf.push(fmt(numbered[1]));
+      } else {
+        flushList();
+        if (line.trim()) out.push(`<p>${fmt(line)}</p>`);
+      }
+    }
+    flushList();
+    return out.join('');
   }
 
   // ── Battle Card ────────────────────────────────────────────────────────────
