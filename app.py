@@ -125,7 +125,7 @@ def case_studies():
         return jsonify({"results": library})
 
     # Semantic ranking: use Pinecone to score, filter, and reorder
-    MIN_SCORE = 0.28  # below this threshold a result is not relevant to the query
+    MIN_SCORE = 0.22  # below this threshold a result is not semantically relevant
     pinecone_filter = {"doc_type": {"$eq": "case_study"}}
     matches = vs.search(get_embedding(query), top_k=50, filter=pinecone_filter)
     score_by_file: dict = {}
@@ -136,6 +136,7 @@ def case_studies():
 
     # Assign scores and filter out low-relevancy results
     scored = []
+    scored_files = set()
     for s in library:
         raw_score = score_by_file.get(s.get("file_name", ""), 0.0)
         if raw_score < MIN_SCORE:
@@ -143,6 +144,26 @@ def case_studies():
         entry = dict(s)  # copy so we don't mutate the library
         entry["match_score"] = round(raw_score * 100)
         scored.append(entry)
+        scored_files.add(s.get("file_name", ""))
+
+    # Keyword fallback: include entries whose product/industry/tagline/company
+    # match query words — catches cases where Pinecone chunks don't score well
+    # but the case study is clearly relevant (e.g. searching "payroll" → Payroll entries)
+    query_words = [w for w in query.lower().split() if len(w) > 3]
+    if query_words:
+        for s in library:
+            if s.get("file_name", "") in scored_files:
+                continue  # already included via Pinecone
+            searchable = " ".join([
+                s.get("company", ""), s.get("industry", ""),
+                s.get("product", ""), s.get("tagline", ""),
+                s.get("challenge", ""),
+            ]).lower()
+            if any(word in searchable for word in query_words):
+                entry = dict(s)
+                entry["match_score"] = 22  # keyword-only match floor
+                scored.append(entry)
+
     scored.sort(key=lambda x: x["match_score"], reverse=True)
 
     return jsonify({"results": scored})
