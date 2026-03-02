@@ -625,6 +625,107 @@
       .top-bar, .tabs { padding-left: 16px; padding-right: 16px; }
     }
 
+    /* ── Case Study Finder ──────────────────────────────────────────────────── */
+    .cs-controls {
+      background: #fff;
+      border-bottom: 1px solid #E5E5E5;
+      padding: 20px 32px;
+    }
+    .cs-search-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .cs-search-row input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid #E5E5E5;
+      border-radius: 6px;
+      font-family: 'SageText', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+    }
+    .cs-search-row input:focus { border-color: #00D639; }
+    .cs-search-row button {
+      padding: 10px 22px;
+      background: #00D639;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      font-family: 'SageText', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .cs-filters {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .cs-filter-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cs-filter-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #666;
+      white-space: nowrap;
+    }
+    .cs-pill {
+      padding: 5px 14px;
+      border: 1px solid #E5E5E5;
+      border-radius: 20px;
+      font-family: 'SageText', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      background: #fff;
+      color: #444;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .cs-pill:hover { border-color: #00D639; color: #000; }
+    .cs-pill.active { background: #00D639; border-color: #00D639; color: #000; font-weight: 700; }
+    .cs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+      padding: 24px 32px;
+    }
+    .cs-card {
+      background: #fff;
+      border: 1px solid #E5E5E5;
+      border-radius: 8px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .cs-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .cs-company {
+      font-family: 'SageHeadline', sans-serif;
+      font-weight: 900;
+      font-size: 1.05rem;
+      line-height: 1.2;
+    }
+    .cs-card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .cs-pain-points h4 { font-size: 0.78rem; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .cs-pain-points ul { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+    .cs-pain-points ul li::before { content: "·  "; color: #00D639; font-weight: 700; }
+    .cs-pain-points ul li { font-size: 0.88rem; color: #333; }
+    .cs-snippet { font-size: 0.88rem; color: #555; line-height: 1.55; border-left: 3px solid #E5E5E5; padding-left: 10px; }
+    @media (max-width: 680px) {
+      .cs-controls { padding: 16px; }
+      .cs-grid { padding: 16px; grid-template-columns: 1fr; }
+    }
+
     /* ── Print/PDF styles ───────────────────────────────────────────────────── */
     @media print {
       .top-bar, .tabs, .bc-controls, .bc-footer { display: none !important; }
@@ -646,6 +747,7 @@
 <!-- ── Tabs ── -->
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('search', this)">Knowledge Search</button>
+  <button class="tab-btn" onclick="switchTab('casestudies', this)">Case Studies</button>
   <button class="tab-btn" onclick="switchTab('battlecard', this)">Battle Cards</button>
 </div>
 
@@ -696,6 +798,41 @@
 </div>
 
 <!-- ════════════════════════════════════════════════════════════════════════════
+     Tab: Case Studies
+     ════════════════════════════════════════════════════════════════════════ -->
+<div id="tab-casestudies" class="tab-panel">
+
+  <div class="cs-controls">
+    <div class="cs-search-row">
+      <input type="text" id="csQuery" placeholder="Search by industry, pain point, outcome…" onkeydown="if(event.key==='Enter') searchCaseStudies()" />
+      <button onclick="searchCaseStudies()">Search</button>
+    </div>
+    <div class="cs-filters">
+      <div class="cs-filter-group">
+        <span class="cs-filter-label">Product:</span>
+        <button class="cs-pill active" data-group="product" data-value="" onclick="setPill(this)">All</button>
+        <button class="cs-pill" data-group="product" data-value="HCM" onclick="setPill(this)">HCM</button>
+        <button class="cs-pill" data-group="product" data-value="Payroll" onclick="setPill(this)">Payroll</button>
+      </div>
+      <div class="cs-filter-group">
+        <span class="cs-filter-label">Segment:</span>
+        <button class="cs-pill active" data-group="segment" data-value="" onclick="setPill(this)">All</button>
+        <button class="cs-pill" data-group="segment" data-value="enterprise" onclick="setPill(this)">Enterprise</button>
+        <button class="cs-pill" data-group="segment" data-value="mid_market" onclick="setPill(this)">Mid-Market</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="csArea" class="cs-grid">
+    <div class="empty-state" style="grid-column:1/-1; padding-top:60px">
+      <div class="icon">📋</div>
+      <p>Loading case studies…</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════════
      Tab: Battle Cards
      ════════════════════════════════════════════════════════════════════════ -->
 <div id="tab-battlecard" class="tab-panel">
@@ -730,6 +867,67 @@
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
     btn.classList.add('active');
+    if (name === 'casestudies') loadCaseStudies();
+  }
+
+  // ── Case Study Finder ───────────────────────────────────────────────────────
+  function setPill(pill) {
+    const group = pill.dataset.group;
+    document.querySelectorAll(`.cs-pill[data-group="${group}"]`).forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    searchCaseStudies();
+  }
+
+  function getActivePill(group) {
+    const active = document.querySelector(`.cs-pill.active[data-group="${group}"]`);
+    return active ? active.dataset.value : '';
+  }
+
+  function loadCaseStudies() { searchCaseStudies(); }
+
+  async function searchCaseStudies() {
+    const area   = document.getElementById('csArea');
+    const query   = document.getElementById('csQuery').value.trim();
+    const product = getActivePill('product');
+    const segment = getActivePill('segment');
+
+    area.innerHTML = '<div class="empty-state" style="grid-column:1/-1;padding-top:60px"><div class="icon">⏳</div><p>Searching…</p></div>';
+
+    try {
+      const res  = await fetch('/api/case-studies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, product, segment }),
+      });
+      const data = await res.json();
+      renderCaseStudies(data.results || [], area);
+    } catch (e) {
+      area.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><p style="color:#E85D4A">Something went wrong: ${esc(e.message)}</p></div>`;
+    }
+  }
+
+  function renderCaseStudies(results, area) {
+    if (!results.length) {
+      area.innerHTML = '<div class="empty-state" style="grid-column:1/-1;padding-top:60px"><div class="icon">🔍</div><p>No case studies found. Try a different search or clear the filters.</p></div>';
+      return;
+    }
+    area.innerHTML = results.map(r => {
+      const painList = (r.pain_points || []).map(p => `<li>${esc(p)}</li>`).join('');
+      const segLabel = r.segment === 'enterprise' ? 'Enterprise' : r.segment === 'mid_market' ? 'Mid-Market' : r.segment;
+      return `
+        <div class="cs-card">
+          <div class="cs-card-header">
+            <div class="cs-company">${esc(r.company)}</div>
+            ${r.industry ? `<span class="tag tag-type">${esc(r.industry)}</span>` : ''}
+          </div>
+          <div class="cs-card-tags">
+            ${r.product  ? `<span class="tag tag-segment">${esc(r.product)}</span>` : ''}
+            ${segLabel   ? `<span class="tag tag-persona">${esc(segLabel)}</span>` : ''}
+          </div>
+          ${painList ? `<div class="cs-pain-points"><h4>Pain points</h4><ul>${painList}</ul></div>` : ''}
+          ${r.snippet ? `<div class="cs-snippet">${esc(r.snippet)}…</div>` : ''}
+        </div>`;
+    }).join('');
   }
 
   function esc(str) {

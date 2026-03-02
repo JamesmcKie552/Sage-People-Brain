@@ -87,6 +87,62 @@ def search():
     return jsonify({"results": results})
 
 
+@app.route("/api/case-studies", methods=["POST"])
+def case_studies():
+    data = request.get_json() or {}
+    query   = data.get("query", "").strip()
+    product = data.get("product", "").strip()   # "HCM" or "Payroll"
+    segment = data.get("segment", "").strip()   # "enterprise" or "mid_market"
+
+    # Broad default so "browse all" works without a query
+    search_query = query if query else "customer success HR transformation outcome results"
+
+    pinecone_filter = {"doc_type": {"$eq": "case_study"}}
+    if segment:
+        pinecone_filter = {"$and": [pinecone_filter, {"segment": {"$in": [segment, "all"]}}]}
+
+    query_embedding = get_embedding(search_query)
+    matches = vs.search(query_embedding=query_embedding, top_k=50, filter=pinecone_filter)
+
+    def parse_filename(fname):
+        stem = fname.replace(".pdf", "")
+        parts = [p.strip() for p in stem.split("\u2013")]  # em dash
+        return {
+            "company":  parts[0] if len(parts) > 0 else stem,
+            "industry": parts[1] if len(parts) > 1 else "",
+            "product":  parts[2] if len(parts) > 2 else "",
+        }
+
+    # Deduplicate by file_name, keeping highest-scoring chunk per case study
+    seen: dict = {}
+    for m in matches:
+        fname = (m.metadata or {}).get("file_name", "")
+        if fname not in seen or m.score > seen[fname]["score"]:
+            parsed = parse_filename(fname)
+            seen[fname] = {
+                "company":    parsed["company"],
+                "industry":   parsed["industry"],
+                "product":    parsed["product"],
+                "segment":    (m.metadata or {}).get("segment", ""),
+                "pain_points": (m.metadata or {}).get("pain_points", []),
+                "snippet":    ((m.metadata or {}).get("text", ""))[:300].strip(),
+                "file_name":  fname,
+                "score":      m.score,
+            }
+
+    results = sorted(seen.values(), key=lambda x: x["score"], reverse=True)
+
+    # Post-filter by product if requested
+    if product:
+        results = [r for r in results if product.lower() in r["product"].lower()]
+
+    # Don't expose score to the frontend
+    for r in results:
+        del r["score"]
+
+    return jsonify({"results": results})
+
+
 @app.route("/api/battlecard", methods=["POST"])
 def battlecard():
     """Kick off battle card generation in a background thread and return a job ID immediately."""
