@@ -721,12 +721,18 @@
     .cs-pain-points ul li::before { content: "·  "; color: #00D639; font-weight: 700; }
     .cs-pain-points ul li { font-size: 0.88rem; color: #333; }
     .cs-snippet { font-size: 0.88rem; color: #555; line-height: 1.55; border-left: 3px solid #E5E5E5; padding-left: 10px; }
-    .cs-sections { display: flex; flex-direction: column; gap: 10px; }
-    .cs-section { display: flex; flex-direction: column; gap: 3px; }
-    .cs-section-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #999; }
-    .cs-section .cs-section-label { color: #999; }
+    .cs-sections { display: flex; flex-direction: column; gap: 0; border: 1px solid #E8E8E8; border-radius: 6px; overflow: hidden; }
+    .cs-section { display: flex; flex-direction: column; gap: 5px; padding: 11px 14px; border-bottom: 1px solid #E8E8E8; }
+    .cs-section:last-child { border-bottom: none; }
+    .cs-challenge { border-left: 4px solid #F0A500; background: #FFFDF5; }
+    .cs-solution-section { border-left: 4px solid #1E72BE; background: #F6FAFF; }
+    .cs-results { border-left: 4px solid #00875a; background: #F3FBF6; }
+    .cs-section-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
+    .cs-challenge .cs-section-label { color: #9A6500; }
+    .cs-solution-section .cs-section-label { color: #1E72BE; }
     .cs-results .cs-section-label { color: #00875a; }
-    .cs-section-text { font-size: 0.88rem; color: #333; line-height: 1.55; }
+    .cs-section-text { font-size: 0.87rem; color: #333; line-height: 1.6; white-space: pre-line; }
+    .cs-match-badge { display: inline-flex; align-items: center; padding: 2px 9px; background: #E8F9ED; color: #00875a; border-radius: 12px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.3px; }
     .cs-quote { background: #F5F5F5; border-left: 3px solid #00D639; padding: 12px 14px; border-radius: 0 6px 6px 0; }
     .cs-quote-text { font-size: 0.9rem; color: #222; line-height: 1.5; font-style: italic; }
     .cs-quote-attr { font-size: 0.78rem; color: #666; margin-top: 6px; font-weight: 500; }
@@ -928,10 +934,12 @@
           ${r.quote.name ? `<div class="cs-quote-attr">— ${esc(r.quote.name)}${r.quote.title ? ', ' + esc(r.quote.title) : ''}</div>` : ''}
         </div>` : '';
       const metaItems = [
+        r.match_score  ? `<span class="cs-match-badge">${r.match_score}% match</span>` : '',
         r.company_size ? `<span class="tag tag-persona">${esc(r.company_size)}</span>` : '',
         r.country      ? `<span class="tag tag-type">${esc(r.country)}</span>` : '',
         r.product      ? `<span class="tag tag-segment">${esc(r.product)}</span>` : '',
       ].filter(Boolean).join('');
+      const hasSections = r.challenge || r.solution || r.results;
       return `
         <div class="cs-card">
           <div class="cs-card-header">
@@ -939,11 +947,11 @@
             ${r.industry ? `<span class="tag tag-type" style="flex-shrink:0">${esc(r.industry)}</span>` : ''}
           </div>
           ${metaItems ? `<div class="cs-card-tags">${metaItems}</div>` : ''}
-          <div class="cs-sections">
-            ${r.challenge ? `<div class="cs-section"><div class="cs-section-label">Challenge</div><div class="cs-section-text">${esc(r.challenge)}</div></div>` : ''}
-            ${r.solution  ? `<div class="cs-section"><div class="cs-section-label">Solution</div><div class="cs-section-text">${esc(r.solution)}</div></div>` : ''}
+          ${hasSections ? `<div class="cs-sections">
+            ${r.challenge ? `<div class="cs-section cs-challenge"><div class="cs-section-label">Challenge</div><div class="cs-section-text">${esc(r.challenge)}</div></div>` : ''}
+            ${r.solution  ? `<div class="cs-section cs-solution-section"><div class="cs-section-label">Solution</div><div class="cs-section-text">${esc(r.solution)}</div></div>` : ''}
             ${r.results   ? `<div class="cs-section cs-results"><div class="cs-section-label">Results</div><div class="cs-section-text">${esc(r.results)}</div></div>` : ''}
-          </div>
+          </div>` : ''}
           ${quoteBlock}
         </div>`;
     }).join('');

@@ -124,7 +124,8 @@ def case_studies():
     if not query:
         return jsonify({"results": library})
 
-    # Semantic ranking: use Pinecone to score and reorder
+    # Semantic ranking: use Pinecone to score, filter, and reorder
+    MIN_SCORE = 0.28  # below this threshold a result is not relevant to the query
     pinecone_filter = {"doc_type": {"$eq": "case_study"}}
     matches = vs.search(get_embedding(query), top_k=50, filter=pinecone_filter)
     score_by_file: dict = {}
@@ -133,14 +134,16 @@ def case_studies():
         if fname not in score_by_file or m.score > score_by_file[fname]:
             score_by_file[fname] = m.score
 
-    # Assign scores and sort; unscored stories go to the end
+    # Assign scores and filter out low-relevancy results
     scored = []
     for s in library:
-        s["_score"] = score_by_file.get(s.get("file_name", ""), 0.0)
-        scored.append(s)
-    scored.sort(key=lambda x: x["_score"], reverse=True)
-    for s in scored:
-        s.pop("_score", None)
+        raw_score = score_by_file.get(s.get("file_name", ""), 0.0)
+        if raw_score < MIN_SCORE:
+            continue  # skip results that don't match the query
+        entry = dict(s)  # copy so we don't mutate the library
+        entry["match_score"] = round(raw_score * 100)
+        scored.append(entry)
+    scored.sort(key=lambda x: x["match_score"], reverse=True)
 
     return jsonify({"results": scored})
 
