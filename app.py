@@ -109,9 +109,9 @@ def case_study_pdf(filename):
 @app.route("/api/case-studies", methods=["POST"])
 def case_studies():
     data = request.get_json() or {}
-    query   = data.get("query", "").strip()
-    product = data.get("product", "").strip()   # "HCM" or "Payroll"
-    segment = data.get("segment", "").strip()   # "enterprise" or "mid_market"
+    query   = (data.get("query") or "").strip()
+    product = (data.get("product") or "").strip()   # "HCM" or "Payroll"
+    segment = (data.get("segment") or "").strip()   # "enterprise" or "mid_market"
 
     library = _load_case_study_library()
 
