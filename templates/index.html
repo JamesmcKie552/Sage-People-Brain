@@ -144,10 +144,10 @@ body { font-family: 'SageText', 'Inter', -apple-system, sans-serif; background: 
 .bc-meta-pill { font-size: 11px; color: #888; background: #161616; border: 1px solid #1E1E1E; padding: 3px 10px; border-radius: 6px; }
 
 /* Quick wins */
-.quick-wins-banner { background: linear-gradient(145deg, #111 0%, #0C1A0E 100%); border: 1px solid rgba(0,214,57,0.15); border-radius: 14px; padding: 24px 28px; margin-bottom: 16px; }
+.quick-wins-banner { background: linear-gradient(145deg, #0A1B0D 0%, #0E2213 100%); border: 1px solid rgba(0,214,57,0.28); border-radius: 14px; padding: 24px 28px; margin-bottom: 16px; }
 .qw-title { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #00D639; margin-bottom: 16px; }
 .quick-wins-banner ul { list-style: none; display: flex; flex-direction: column; gap: 2px; }
-.quick-wins-banner li { display: flex; gap: 12px; padding: 8px 0; font-size: 14px; line-height: 1.65; color: #999; }
+.quick-wins-banner li { display: flex; gap: 12px; padding: 8px 0; font-size: 14px; line-height: 1.65; color: #ccc; font-weight: 500; }
 .quick-wins-banner li::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #00D639; flex-shrink: 0; margin-top: 8px; }
 .quick-wins-banner li strong { color: #fff; }
 
@@ -178,7 +178,7 @@ body { font-family: 'SageText', 'Inter', -apple-system, sans-serif; background: 
 .sentiment-footer span { color: #777; font-weight: 600; }
 
 /* Proof points */
-.proof-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+.proof-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
 .proof-item { background: #161616; border: 1px solid #1E1E1E; border-radius: 10px; padding: 14px 16px; }
 .proof-header { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 8px; }
 .proof-customer { font-size: 13.5px; font-weight: 700; color: #ccc; }
@@ -190,17 +190,31 @@ body { font-family: 'SageText', 'Inter', -apple-system, sans-serif; background: 
 
 /* bc list */
 .bc-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-.bc-list li { font-size: 13.5px; line-height: 1.65; color: #999; padding-left: 16px; position: relative; }
+.bc-list li { font-size: 13.5px; line-height: 1.65; color: #999; padding-left: 16px; position: relative; max-height: 3.3em; overflow: hidden; }
 .bc-list li::before { content: '→'; position: absolute; left: 0; color: #00D639; font-weight: 700; }
 .bc-list.danger li::before { color: #FF4D4D; content: '!'; }
 .bc-list.warning li::before { color: #F0A500; content: '⚠'; font-size: 11px; }
 .bc-list li strong { color: #ddd; }
+.bc-list.bc-collapsed li:nth-child(n+5) { display: none; }
+.bc-show-more { background: none; border: 1px solid #2A2A2A; color: #666; font-size: 12px; font-weight: 600; padding: 6px 16px; border-radius: 8px; cursor: pointer; margin-top: 10px; display: block; font-family: 'SageText', sans-serif; transition: all 0.15s; }
+.bc-show-more:hover { border-color: #444; color: #999; }
+
+/* Proof grid collapse */
+.proof-grid.bc-collapsed .proof-item:nth-child(n+7) { display: none; }
+
+/* Section nav */
+.bc-section-nav { position: sticky; top: 0; z-index: 50; background: #0A0A0A; border-bottom: 1px solid #1E1E1E; display: flex; gap: 4px; overflow-x: auto; padding: 10px 0; margin: 0 0 24px; scrollbar-width: none; }
+.bc-section-nav::-webkit-scrollbar { display: none; }
+.bc-nav-link { display: inline-flex; align-items: center; padding: 5px 12px; border-radius: 7px; font-size: 11.5px; font-weight: 600; color: #666; text-decoration: none; white-space: nowrap; transition: all 0.15s; border: 1px solid transparent; }
+.bc-nav-link:hover { background: #1A1A1A; color: #999; border-color: #2A2A2A; }
 
 /* Objections */
-.objection-item { background: #161616; border-radius: 10px; padding: 16px 18px; margin-bottom: 10px; }
+.objection-item { background: #161616; border-radius: 10px; padding: 16px 18px; margin-bottom: 10px; border: 1px solid #1E1E1E; }
 .objection-item:last-child { margin-bottom: 0; }
-.objection-q { font-size: 13px; font-weight: 600; color: #999; margin-bottom: 8px; font-style: italic; }
-.objection-a { font-size: 13px; color: #00D639; line-height: 1.65; }
+.objection-q { font-size: 13px; font-weight: 600; color: #ccc; margin-bottom: 12px; font-style: italic; background: #1E1E1E; border: 1px solid #2A2A2A; border-left: 3px solid #555; border-radius: 6px; padding: 10px 14px; line-height: 1.55; }
+.objection-q::before { content: '"'; color: #555; margin-right: 2px; }
+.objection-q::after { content: '"'; color: #555; margin-left: 2px; }
+.objection-a { font-size: 13px; color: #00D639; line-height: 1.65; padding-left: 14px; border-left: 2px solid rgba(0,214,57,0.35); }
 
 /* Two-col layout */
 .bc-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
@@ -546,6 +560,32 @@ function renderCaseStudies(results, area) {
 let _lastCardData = null;
 let _lastCardTitle = 'Sage People Battle Card';
 
+function collapsibleList(items, cls, threshold) {
+  threshold = threshold || 4;
+  if (!items || !items.length) return '';
+  const hasMore = items.length > threshold;
+  const listCls = ('bc-list ' + (cls||'') + (hasMore ? ' bc-collapsed' : '')).trim();
+  const remaining = items.length - threshold;
+  return `<ul class="${listCls}">${li(items)}</ul>` +
+    (hasMore ? `<button class="bc-show-more" onclick="toggleBcList(this)">Show ${remaining} more ↓</button>` : '');
+}
+
+function toggleBcList(btn) {
+  const list = btn.previousElementSibling;
+  list.classList.toggle('bc-collapsed');
+  const collapsed = list.classList.contains('bc-collapsed');
+  const total = list.querySelectorAll('li').length;
+  btn.textContent = collapsed ? `Show ${total - 4} more ↓` : 'Show less ↑';
+}
+
+function toggleProofGrid(btn) {
+  const grid = btn.previousElementSibling;
+  grid.classList.toggle('bc-collapsed');
+  const collapsed = grid.classList.contains('bc-collapsed');
+  const total = grid.querySelectorAll('.proof-item').length;
+  btn.textContent = collapsed ? `Show ${total - 6} more ↓` : 'Show less ↑';
+}
+
 function doBattleCard() {
   const competitor = document.getElementById('competitorInput').value.trim();
   const persona    = document.getElementById('personaInput').value.trim();
@@ -617,15 +657,35 @@ function renderBattleCard(card, area) {
   const briefTitle = esc(card.persona_briefing_title || 'Sales Briefing');
   _lastCardTitle = `Sage People vs ${card.competitor} — ${card.persona_briefing_title || 'Battle Card'}`;
 
+  const smRows = (card.stakeholder_map||[]).map(r => `
+    <tr>
+      <td>${esc(r.persona||'')}</td>
+      <td>${esc(r.shift_emphasis_to||'')}</td>
+      <td>${esc(r.key_proof_point||'')}</td>
+    </tr>`).join('');
+
+  const hasStakeholder = smRows.length > 0;
+  const sectionNav = `
+    <div class="bc-section-nav">
+      <a class="bc-nav-link" href="#bc-wins">⚡ Quick Wins</a>
+      <a class="bc-nav-link" href="#bc-sentiment">Reviews</a>
+      <a class="bc-nav-link" href="#bc-proof">Proof Points</a>
+      <a class="bc-nav-link" href="#bc-diffs">Differentiators</a>
+      <a class="bc-nav-link" href="#bc-obj">Objections</a>
+      <a class="bc-nav-link" href="#bc-winlose">Win / Lose</a>
+      <a class="bc-nav-link" href="#bc-traps">Traps &amp; Landmines</a>
+      ${hasStakeholder ? '<a class="bc-nav-link" href="#bc-stakeholder">Stakeholder Map</a>' : ''}
+    </div>`;
+
   const quickWinsHtml = `
-    <div class="quick-wins-banner">
+    <div class="quick-wins-banner" id="bc-wins">
       <div class="qw-title">⚡ Quick Wins — ${briefTitle}</div>
       <ul>${li(card.quick_wins)}</ul>
     </div>`;
 
   const s = card.sentiment_summary || {};
   const sentimentHtml = `
-    <div class="sentiment-card">
+    <div class="sentiment-card" id="bc-sentiment">
       <div class="section-header">
         <div class="sec-bar"></div>
         <span class="section-title">Competitor Review Sentiment</span>
@@ -660,61 +720,62 @@ function renderBattleCard(card, area) {
       ${p.outcome ? `<div class="proof-outcome">${esc(p.outcome)}</div>` : ''}
     </div>`;
   }).join('');
+  const proofCount = (card.proof_points || []).length;
+  const proofCollapsed = proofCount > 6 ? ' bc-collapsed' : '';
+  const proofShowMore = proofCount > 6
+    ? `<button class="bc-show-more" onclick="toggleProofGrid(this)">Show ${proofCount - 6} more ↓</button>` : '';
   const proofHtml = `
-    <div class="bc-section-card">
+    <div class="bc-section-card" id="bc-proof">
       <div class="section-header"><div class="sec-bar"></div><span class="section-title">Proof Points &amp; Customer Wins</span></div>
-      <div class="section-body"><div class="proof-grid">${proofItems}</div></div>
+      <div class="section-body">
+        <div class="proof-grid${proofCollapsed}">${proofItems}</div>
+        ${proofShowMore}
+      </div>
     </div>`;
 
   const diffsHtml = `
-    <div class="bc-section-card">
+    <div class="bc-section-card" id="bc-diffs">
       <div class="section-header"><div class="sec-bar"></div><span class="section-title">Our Differentiators</span></div>
-      <div class="section-body"><ul class="bc-list">${li(card.our_differentiators)}</ul></div>
+      <div class="section-body">${collapsibleList(card.our_differentiators, '', 4)}</div>
     </div>`;
 
   const objItems = (card.objections||[]).map(o => `
     <div class="objection-item">
-      <div class="objection-q">"${esc(o.objection||'')}"</div>
-      <div class="objection-a">↳ ${esc(o.response||'')}</div>
+      <div class="objection-q">${esc(o.objection||'')}</div>
+      <div class="objection-a">${esc(o.response||'')}</div>
     </div>`).join('');
   const objHtml = `
-    <div class="bc-section-card">
+    <div class="bc-section-card" id="bc-obj">
       <div class="section-header"><div class="sec-bar sec-bar-blue"></div><span class="section-title">Objection Handling</span></div>
       <div class="section-body">${objItems}</div>
     </div>`;
 
   const winLoseHtml = `
-    <div class="bc-two-col">
+    <div class="bc-two-col" id="bc-winlose">
       <div class="bc-section-card">
         <div class="section-header"><div class="sec-bar sec-bar-red"></div><span class="section-title">Why They Win</span></div>
-        <div class="section-body"><ul class="bc-list danger">${li(card.why_they_win)}</ul></div>
+        <div class="section-body">${collapsibleList(card.why_they_win, 'danger', 4)}</div>
       </div>
       <div class="bc-section-card">
         <div class="section-header"><div class="sec-bar" style="background:#F0A500"></div><span class="section-title">Where We Lose</span></div>
-        <div class="section-body"><ul class="bc-list warning">${li(card.where_we_lose)}</ul></div>
+        <div class="section-body">${collapsibleList(card.where_we_lose, 'warning', 4)}</div>
       </div>
     </div>`;
 
   const trapLandHtml = `
-    <div class="bc-two-col">
+    <div class="bc-two-col" id="bc-traps">
       <div class="bc-section-card">
         <div class="section-header"><div class="sec-bar"></div><span class="section-title">Trap-Setting Questions</span></div>
-        <div class="section-body"><ul class="bc-list">${li(card.trap_questions)}</ul></div>
+        <div class="section-body">${collapsibleList(card.trap_questions, '', 4)}</div>
       </div>
       <div class="bc-section-card">
         <div class="section-header"><div class="sec-bar"></div><span class="section-title">Landmines to Plant Early</span></div>
-        <div class="section-body"><ul class="bc-list">${li(card.landmines)}</ul></div>
+        <div class="section-body">${collapsibleList(card.landmines, '', 4)}</div>
       </div>
     </div>`;
 
-  const smRows = (card.stakeholder_map||[]).map(r => `
-    <tr>
-      <td>${esc(r.persona||'')}</td>
-      <td>${esc(r.shift_emphasis_to||'')}</td>
-      <td>${esc(r.key_proof_point||'')}</td>
-    </tr>`).join('');
   const stakeholderHtml = smRows ? `
-    <div class="bc-section-card">
+    <div class="bc-section-card" id="bc-stakeholder">
       <div class="section-header"><div class="sec-bar"></div><span class="section-title">Stakeholder Map — If Others Join</span></div>
       <div class="section-body" style="padding:0">
         <table class="stakeholder-table">
@@ -735,6 +796,7 @@ function renderBattleCard(card, area) {
     </div>`;
 
   area.innerHTML = `
+    ${sectionNav}
     <div id="bc-printable">
       <div class="bc-title-block">
         <div class="bc-vs-line">Sage People <span class="green">vs</span> ${competitor} — ${briefTitle}</div>

@@ -444,7 +444,7 @@ Return ONLY a valid JSON object — no markdown, no extra text — matching this
   "generated_date": "{today}",
   "sources_used": {json.dumps(source_files)},
   "quick_wins": [
-    "3 bullets — the single most important things for THIS persona to know. Framed in their language. One sentence each. These are what a rep reads in the 30 seconds before walking into the meeting."
+    "3 bullets — max 8 words each. Ultra-punchy. What the rep absolutely must know before walking in. No source tags. Think flash card."
   ],
   "sentiment_summary": {{
     "source": "G2, TrustRadius and Capterra",
@@ -474,7 +474,7 @@ Return ONLY a valid JSON object — no markdown, no extra text — matching this
     "4 discovery questions tailored to topics THIS persona controls or cares about. Start with 'How do you...' or 'What happens when...'. Target {competitor}'s known weak spots."
   ],
   "landmines": [
-    "3 landmines — exact phrases the rep can say verbatim, framed in this persona's language and concerns. Start with 'One thing worth exploring early is...' or similar."
+    "3 landmines — short quotable phrases only (6-10 words). The rep drops them verbatim in conversation. No intro sentence, no explanation. E.g. 'Ask them how they handle year-end payroll.'"
   ],
   "stakeholder_map": [
     {{"persona": "A stakeholder who might unexpectedly join the meeting", "shift_emphasis_to": "What to pivot to if they appear", "key_proof_point": "One customer example to reference"}}
@@ -482,8 +482,9 @@ Return ONLY a valid JSON object — no markdown, no extra text — matching this
 }}
 
 RULES:
-- Exactly 3 items in quick_wins. These must be persona-specific, not generic.
-- One sentence per bullet throughout. No exceptions.
+- Exactly 3 items in quick_wins. Max 8 words each. No source tags. Persona-specific, not generic.
+- One sentence per bullet throughout (except quick_wins and landmines). No exceptions.
+- Landmines must be 6-10 word quotable phrases. Not sentences. Not introductions. Just the phrase.
 - Be honest in why_they_win and where_we_lose — a one-sided card loses credibility.
 - Only use claims grounded in the knowledge base or G2/TrustRadius. No invented facts.
 - Direct, conversational language — internal use, not marketing copy.
