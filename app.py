@@ -115,7 +115,11 @@ def case_studies():
 
     library = _load_case_study_library()
 
-    # Apply product filter
+    # Apply product filter — explicit or auto-detected from query
+    if not product and query:
+        q_lower = query.lower()
+        if "payroll" in q_lower and not any(w in q_lower for w in ["hcm", " hr ", "people management"]):
+            product = "Payroll"
     if product:
         library = [s for s in library if product.lower() in s.get("product", "").lower()]
 
