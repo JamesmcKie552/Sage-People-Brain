@@ -109,11 +109,27 @@ def case_study_pdf(filename):
 @app.route("/api/case-studies", methods=["POST"])
 def case_studies():
     data = request.get_json() or {}
-    query   = (data.get("query") or "").strip()
-    product = (data.get("product") or "").strip()   # "HCM" or "Payroll"
-    segment = (data.get("segment") or "").strip()   # "enterprise" or "mid_market"
+    query     = (data.get("query") or "").strip()
+    product   = (data.get("product") or "").strip()   # "HCM" or "Payroll"
+    segment   = (data.get("segment") or "").strip()   # "enterprise" or "mid_market"
+    size_band = (data.get("size_band") or "").strip()  # "small", "mid", "large"
 
     library = _load_case_study_library()
+
+    # Apply size band filter by parsing the numeric part of company_size
+    if size_band:
+        def parse_size(s):
+            import re
+            nums = re.findall(r'[\d,]+', s.get("company_size", ""))
+            if not nums:
+                return None
+            return int(nums[0].replace(",", ""))
+        if size_band == "small":
+            library = [s for s in library if (parse_size(s) or 9999) <= 500]
+        elif size_band == "mid":
+            library = [s for s in library if 500 < (parse_size(s) or 0) <= 1500]
+        elif size_band == "large":
+            library = [s for s in library if (parse_size(s) or 0) > 1500]
 
     # Apply product filter — explicit or auto-detected from query
     if not product and query:
@@ -170,7 +186,8 @@ def case_studies():
             searchable = " ".join([
                 s.get("company", ""), s.get("industry", ""),
                 s.get("product", ""), s.get("tagline", ""),
-                s.get("challenge", ""),
+                s.get("challenge", ""), s.get("company_size", ""),
+                s.get("country", ""),
             ]).lower()
             if any(word in searchable for word in query_words):
                 entry = dict(s)
@@ -230,9 +247,27 @@ def ask():
 
     context = "\n\n---\n\n".join(context_parts)
 
-    prompt = f"""You are a Sage People sales knowledge assistant. Sage People is a cloud HR and payroll platform for 200–5,000 employee organisations.
+    prompt = f"""You are a Sage People assistant for sales, marketing, product marketing, and success teams.
 
-Answer the following question using ONLY the provided knowledge base excerpts. Be conversational, specific, and directly useful to a sales professional. Where relevant, cite the source number like [1] or [2]. If the excerpts don't contain enough information to answer fully, say so honestly rather than guessing.
+Answer the question below. Start with the answer itself — the first word of your response should be content, not framing.
+
+RULES:
+- Under 250 words total.
+- Short paragraphs, 2–3 sentences max.
+- Bold key facts with **double asterisks**.
+- Bullet lists are fine for scannable items.
+- No markdown headers, no horizontal rules, no blockquotes.
+- No inline citation numbers — sources are shown separately.
+
+CRITICAL — NEVER write sentences like these (these are banned):
+- "X isn't a standard Sage People persona, but..."
+- "While X isn't explicitly covered, the closest match is..."
+- "Based on the excerpts provided..."
+- "The knowledge base doesn't include..."
+- "Here's how to adapt the messaging..."
+- Any sentence that names what you're doing before doing it.
+
+If a role or scenario isn't explicitly named in the docs, just answer for that role using your knowledge of what matters to them. A CPO, CFO, or any executive gets a direct, confident answer — not a disclaimer that they're not in the persona docs.
 
 QUESTION: {query}
 
@@ -511,6 +546,44 @@ RULES:
     except Exception as e:
         import traceback
         print(f"[battlecard:{job_id}] FAILED: {e}")
+        _jobs[job_id] = {"status": "error", "error": str(e), "traceback": traceback.format_exc()}
+
+
+INTEL_FILE = Path(__file__).parent / "static" / "competitor_intel.json"
+
+
+@app.route("/api/competitor-intel", methods=["GET"])
+def competitor_intel():
+    if not INTEL_FILE.exists():
+        return jsonify({"competitors": []})
+    return jsonify({"competitors": json.loads(INTEL_FILE.read_text())})
+
+
+@app.route("/api/competitor-sweep", methods=["POST"])
+def competitor_sweep_start():
+    job_id = str(uuid.uuid4())
+    _jobs[job_id] = {"status": "running", "step": "Starting sweep…"}
+    threading.Thread(target=_run_competitor_sweep, args=(job_id,), daemon=True).start()
+    return jsonify({"job_id": job_id})
+
+
+@app.route("/api/competitor-sweep/status/<job_id>")
+def competitor_sweep_status(job_id):
+    job = _jobs.get(job_id)
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    return jsonify(job)
+
+
+def _run_competitor_sweep(job_id: str):
+    try:
+        import competitor_sweep
+        def step_cb(msg):
+            _jobs[job_id]["step"] = msg
+        results = competitor_sweep.run_sweep(step_cb=step_cb)
+        _jobs[job_id] = {"status": "done", "result": results}
+    except Exception as e:
+        import traceback
         _jobs[job_id] = {"status": "error", "error": str(e), "traceback": traceback.format_exc()}
 
 

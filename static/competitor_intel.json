@@ -1,0 +1,95 @@
+[
+  {
+    "name": "Workday",
+    "swept_at": "2026-03-08",
+    "error": "JSON parse failed. Raw response: I'll conduct a comprehensive competitive intelligence sweep on Workday's current market position. Let me search for recent information across their positioning, product updates, marketing, reviews, and news.\n\nI've gathered strong research on Workday. Let me compile this into the exact JSON schema re"
+  },
+  {
+    "name": "SAP SuccessFactors",
+    "swept_at": "2026-03-08",
+    "overview": "SAP SuccessFactors is a cloud-native, AI-powered HCM suite serving 10,000+ enterprise organizations across 200+ countries. It targets large global enterprises (5,000+ employees) and SAP ecosystem-locked customers, positioning itself as the premier HR platform for multi-country payroll, talent management, and workforce analytics with unmatched localization (100+ countries, 46+ languages).",
+    "sentiment_trend": "improving",
+    "status_line": "Heavy AI expansion via Joule agents; SmartRecruiters deeply integrated.",
+    "recent_news": [
+      {
+        "headline": "SmartRecruiters integration launches with Joule AI collaboration",
+        "date": "2026-03",
+        "implication": "Signals aggressive talent acquisition bundling; SAP is consolidating hiring + core HR into one stack to compete with Workday's unified experience\u2014a threat for pure-play recruiting vendors."
+      },
+      {
+        "headline": "AI-assisted skill ID from resume now GA (Q4 2025 release)",
+        "date": "2025-10",
+        "implication": "Claimed 50% reduction in profile maintenance time; positions SuccessFactors as AI-first for talent mobility and succession\u2014table stakes for mid-market deal conversations."
+      },
+      {
+        "headline": "Workforce Scheduling solution enters early adopter phase (Jan 2026)",
+        "date": "2026-01",
+        "implication": "New module for shift planning in manufacturing; expands addressable market into production operations and competes with workforce management specialists."
+      },
+      {
+        "headline": "H2 2025 release: 250+ new features including Joule Performance & Goals Agent",
+        "date": "2025-10",
+        "implication": "SuccessFactors is executing relentless feature velocity with AI copilot expansion; counters perception of slowness and module fragmentation that dogs user reviews."
+      },
+      {
+        "headline": "Gartner Leader in Cloud HCM Suites (2025 Magic Quadrant)",
+        "date": "2025-10",
+        "implication": "Maintains enterprise credibility for 1,000+ employee accounts; strong validation for large deal cycles and customer retention plays."
+      }
+    ],
+    "feature_matrix": {
+      "salesforce_native": false,
+      "payroll_included": true,
+      "mid_market_focus": false,
+      "global_payroll": true,
+      "ai_features": "Joule AI copilot with role-aware agents for performance, goals, talent development, HR service, payroll. AI-assisted resume skill identification, document AI for recruiting, natural language task completion. Embedded AI features in learning, analytics, and recruiting. Premium AI licensing (additional cost).",
+      "implementation_weeks": "36\u201352 weeks (typical enterprise; heavily dependent on payroll/compliance scope)",
+      "pricing_model": "Per-employee-per-month subscription (typically $18+ PEPM, minimum 1,000 users). Module-based tiering; bundling discounts 15\u201340%. Hidden costs: implementation (data migration, config), third-party integration, annual maintenance."
+    },
+    "messaging_angles": [
+      "Global HR platform: 100+ localizations, 46+ languages, unified payroll across 59 locales\u2014compliance and scale for multinational enterprises",
+      "AI-powered workforce intelligence: Joule agents, predictive analytics, skills-based talent matching, and real-time insights across the employee lifecycle",
+      "Unified employee experience: Connected core HR, talent management, learning, performance, and analytics in one cloud platform to eliminate data silos",
+      "SAP ecosystem integration: Native integration with S/4HANA and SAP Business Suite for end-to-end financial and operational HR visibility",
+      "Continuous innovation via bi-annual releases: 250+ features per cycle, customer-driven roadmap, early adopter programs (Workforce Scheduling, AI enhancements)"
+    ],
+    "known_weaknesses": [
+      "Complex, clunky UI and steep learning curve: Dated look-and-feel, inconsistent navigation between modules, non-intuitive feature discovery\u2014recurring complaint across G2, Capterra, PeerSpot (2025\u20132026 reviews note sluggish performance, freezing)",
+      "Module fragmentation: Recruiting, Learning, Performance, and Compensation modules feel 'bolted on' over years; limited cross-module integration despite unified platform claims; built-in reports insufficient",
+      "Implementation complexity and high service dependency: Configuration requires SAP certified partners for provisioning; clients cannot be self-sufficient. Complex setup, data migration inflexibility, third-party integration challenges (e.g., Kronos time-off sync issues)",
+      "Premium pricing for large enterprises: Per-user, per-module cost scales aggressively; minimum 1,000 users typical. Implementation + training + ongoing partner support can exceed $500K+ annually for enterprises; above SMB comfort zone ($5\u2013$10 PEPM)",
+      "Change management and adoption challenges: Employees resist new systems, create workarounds; poor training + unclear communication + feature overload = underperformance; strong organizational buy-in required"
+    ],
+    "gap_alerts": [
+      {
+        "type": "product",
+        "severity": "medium",
+        "detail": "Joule AI expansion is aggressive and credible (250+ features, specialized agents in 2H 2025 release), but premium AI licensing adds cost friction. Sage People should emphasize ease of use and lower TCO of AI\u2014avoid feature-for-feature on AI breadth, win on simplicity and rapid ROI.",
+        "talk_track": "SuccessFactors' new AI is powerful, but you're paying a premium and still need partners to configure it. We deliver AI-assisted workflow within your existing tools\u2014no AI licensing upcharges, no partner bottlenecks."
+      },
+      {
+        "type": "messaging",
+        "severity": "high",
+        "detail": "SAP's 'global payroll leader' and '100+ localizations' narrative is genuinely strong and difficult to counter in multinational deals. This is SAP's single strongest moat and a key reason SAP ecosystem companies stay.",
+        "talk_track": "For truly global payroll, SuccessFactors is hard to beat. But if you're consolidating HR and finance, we integrate seamlessly with SAP's payroll layer\u2014you get our ease-of-use without payroll reinvention. Ask about our hybrid approach for non-payroll-primary deals."
+      },
+      {
+        "type": "people",
+        "severity": "low",
+        "detail": "SmartRecruiters acquisition (SAP company, now deeply integrated March 2026) signals SAP's commitment to recruiting experience but also removes recruiting as a standalone competition vector. Sage People should clarify recruiting strengths independently.",
+        "talk_track": "SmartRecruiters integration is smart, but it's still a separate product experience for recruiters. Our recruiting is native to core HR\u2014one system, one data model, one UX for hiring managers and HR teams together."
+      },
+      {
+        "type": "product",
+        "severity": "medium",
+        "detail": "Mandatory People Profile replacement (H1 2026 release) and deprecation of legacy Tiles/Dashboards (originally Nov 2025, now deferred) signals forced upgrades and change management burden on customers. Window for transition dissatisfaction.",
+        "talk_track": "SuccessFactors customers are mid-upgrade chaos right now\u2014forced profile migration, deprecated reporting tools. We offer stability and gradual modernization without forced breaking changes. A good time to explore a less disruptive alternative."
+      }
+    ]
+  },
+  {
+    "name": "HiBob",
+    "swept_at": "2026-03-08",
+    "error": "JSON parse failed. Raw response: I'll conduct a comprehensive competitive intelligence sweep on HiBob. Let me search for current information across multiple angles.\n\nBased on my research, here is the competitive intelligence on HiBob formatted as valid JSON:\n\n```json\n{\n  \"name\": \"HiBob\",\n  \"swept_at\": \"2026-03-08\",\n  \"overview\": \"H"
+  }
+]

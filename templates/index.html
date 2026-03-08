@@ -88,6 +88,11 @@ body { font-family: 'SageText', 'Inter', -apple-system, sans-serif; background: 
 .ans-text li { margin-bottom: 6px; }
 .ans-text strong, .ans-text b { color: #fff; font-weight: 600; }
 .ans-text sup { font-size: 10px; color: #00D639; }
+.ans-text .src-tag { font-size: 9px; color: #555; font-style: italic; }
+.ans-collapsed { max-height: 7.5em; overflow: hidden; position: relative; }
+.ans-collapsed::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2.5em; background: linear-gradient(transparent, #111); pointer-events: none; }
+.ans-more-btn { margin: 8px 0 12px; background: none; border: none; color: #00D639; font-size: 12px; font-family: 'SageText', sans-serif; cursor: pointer; padding: 0; }
+.ans-more-btn:hover { text-decoration: underline; }
 .ans-sources { margin-top: 20px; padding-top: 16px; border-top: 1px solid #1A1A1A; display: flex; flex-wrap: wrap; gap: 8px; }
 .src-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 7px; font-size: 11px; font-weight: 500; background: #161616; color: #888; border: 1px solid #1E1E1E; }
 .src-dot { width: 5px; height: 5px; border-radius: 50%; background: #00D639; flex-shrink: 0; }
@@ -247,6 +252,63 @@ body { font-family: 'SageText', 'Inter', -apple-system, sans-serif; background: 
   .sidebar { display: none; }
   .main { margin-left: 0; }
 }
+
+/* ── Competitor Intel ──────────────────────────────────────────────────────── */
+.ci-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; gap: 12px; flex-wrap: wrap; }
+.ci-comp-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+.ci-comp-tab { padding: 7px 16px; border-radius: 20px; border: 1px solid #2A2A2A; background: #111; color: #888; font-size: 13px; cursor: pointer; transition: all .18s; font-family: 'SageText', sans-serif; }
+.ci-comp-tab.on { background: #0D1F0F; border-color: rgba(0,214,57,.4); color: #00D639; }
+.ci-comp-tab:hover:not(.on) { border-color: #3A3A3A; color: #ccc; }
+.ci-meta { display: flex; align-items: center; gap: 12px; }
+.ci-swept { font-size: 12px; color: #555; }
+.ci-refresh-btn { padding: 6px 14px; border-radius: 6px; border: 1px solid #2A2A2A; background: #111; color: #888; font-size: 12px; cursor: pointer; transition: all .15s; font-family: 'SageText', sans-serif; }
+.ci-refresh-btn:hover { border-color: #3A3A3A; color: #ccc; }
+.ci-refresh-btn:disabled { opacity: .4; cursor: default; }
+.ci-status-bar { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: #0E0E0E; border: 1px solid #1E1E1E; border-radius: 10px; margin-bottom: 20px; }
+.ci-sentiment { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; }
+.ci-sentiment.improving { background: rgba(0,214,57,.12); color: #00D639; border: 1px solid rgba(0,214,57,.25); }
+.ci-sentiment.stable { background: rgba(255,200,0,.1); color: #FFC800; border: 1px solid rgba(255,200,0,.2); }
+.ci-sentiment.declining { background: rgba(255,60,60,.1); color: #FF3C3C; border: 1px solid rgba(255,60,60,.2); }
+.ci-status-line { font-size: 14px; color: #ddd; font-weight: 500; }
+.ci-overview { font-size: 14px; color: #999; line-height: 1.65; margin-bottom: 24px; padding: 16px 18px; background: #0A0A0A; border: 1px solid #1A1A1A; border-radius: 8px; }
+.ci-section-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #555; margin: 24px 0 12px; }
+.ci-news { display: flex; flex-direction: column; gap: 10px; margin-bottom: 4px; }
+.ci-news-item { display: flex; gap: 16px; padding: 14px 16px; background: #0E0E0E; border: 1px solid #1E1E1E; border-radius: 8px; }
+.ci-news-date { font-size: 11px; color: #555; white-space: nowrap; min-width: 52px; padding-top: 2px; }
+.ci-news-body { flex: 1; }
+.ci-news-headline { font-size: 13px; color: #ddd; font-weight: 500; margin-bottom: 4px; }
+.ci-news-impl { font-size: 12px; color: #777; line-height: 1.5; }
+.ci-matrix { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 4px; }
+.ci-matrix th { text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #555; border-bottom: 1px solid #1A1A1A; }
+.ci-matrix td { padding: 10px 12px; border-bottom: 1px solid #141414; color: #bbb; vertical-align: top; }
+.ci-matrix tr:last-child td { border-bottom: none; }
+.ci-matrix tr:hover td { background: #0D0D0D; }
+.ci-matrix td:first-child { color: #777; width: 40%; }
+.ci-matrix .ci-yes { color: #00D639; }
+.ci-matrix .ci-no { color: #555; }
+.ci-two-col-ci { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 4px; }
+.ci-card { background: #0E0E0E; border: 1px solid #1E1E1E; border-radius: 10px; padding: 16px 18px; }
+.ci-card-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #555; margin-bottom: 12px; }
+.ci-msg-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.ci-msg-list li { font-size: 13px; color: #999; line-height: 1.5; padding-left: 12px; position: relative; }
+.ci-msg-list li::before { content: ''; position: absolute; left: 0; top: 8px; width: 4px; height: 4px; border-radius: 50%; background: #333; }
+.ci-weak-list li::before { background: rgba(255,60,60,.4); }
+.ci-gaps { display: flex; flex-direction: column; gap: 10px; }
+.ci-gap { padding: 14px 16px; border-radius: 8px; background: #0E0E0E; border: 1px solid #1E1E1E; border-left: 3px solid #333; }
+.ci-gap.high { border-left-color: #FF3C3C; }
+.ci-gap.medium { border-left-color: #FFC800; }
+.ci-gap.low { border-left-color: #3A3A3A; }
+.ci-gap-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.ci-gap-severity { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px; border-radius: 12px; }
+.ci-gap.high .ci-gap-severity { color: #FF3C3C; background: rgba(255,60,60,.1); border: 1px solid rgba(255,60,60,.2); }
+.ci-gap.medium .ci-gap-severity { color: #FFC800; background: rgba(255,200,0,.08); border: 1px solid rgba(255,200,0,.15); }
+.ci-gap.low .ci-gap-severity { color: #555; background: #111; border: 1px solid #222; }
+.ci-gap-type { font-size: 11px; color: #555; text-transform: capitalize; }
+.ci-gap-detail { font-size: 13px; color: #bbb; line-height: 1.55; margin-bottom: 8px; }
+.ci-gap-talk { font-size: 12px; color: #00D639; line-height: 1.5; padding-left: 12px; border-left: 2px solid rgba(0,214,57,.3); }
+.ci-empty-ico { font-size: 36px; margin-bottom: 12px; opacity: .4; }
+.ci-error { padding: 16px; background: rgba(255,60,60,.08); border: 1px solid rgba(255,60,60,.2); border-radius: 8px; color: #FF3C3C; font-size: 13px; }
+@media (max-width: 780px) { .ci-two-col-ci { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -265,6 +327,7 @@ body { font-family: 'SageText', 'Inter', -apple-system, sans-serif; background: 
     <div class="s-item active" id="nav-k" onclick="switchTab('k')"><span class="s-icon">🔍</span> Knowledge Search</div>
     <div class="s-item" id="nav-c" onclick="switchTab('c')"><span class="s-icon">📋</span> Case Studies <span class="s-badge" id="cs-count">–</span></div>
     <div class="s-item" id="nav-b" onclick="switchTab('b')"><span class="s-icon">⚔️</span> Battle Cards</div>
+    <div class="s-item" id="nav-i" onclick="switchTab('i')"><span class="s-icon">🕵️</span> Competitor Intel</div>
   </div>
   <div class="s-label">Knowledge Base</div>
   <div class="s-nav">
@@ -322,9 +385,12 @@ body { font-family: 'SageText', 'Inter', -apple-system, sans-serif; background: 
       <button class="ask-btn" onclick="searchCaseStudies()">Search</button>
     </div>
     <div class="chips" id="cs-chips" style="margin-top:12px">
-      <div class="chip on" data-product="" data-segment="">All</div>
-      <div class="chip" data-product="HCM" data-segment="">HCM</div>
-      <div class="chip" data-product="Payroll" data-segment="">Payroll</div>
+      <div class="chip on" data-product="" data-segment="" data-size="">All</div>
+      <div class="chip" data-product="HCM" data-segment="" data-size="">HCM</div>
+      <div class="chip" data-product="Payroll" data-segment="" data-size="">Payroll</div>
+      <div class="chip" data-product="" data-segment="" data-size="small">Up to 500 employees</div>
+      <div class="chip" data-product="" data-segment="" data-size="mid">500–1,500 employees</div>
+      <div class="chip" data-product="" data-segment="" data-size="large">1,500+ employees</div>
     </div>
   </div>
   <div class="cs-grid" id="csArea">
@@ -364,17 +430,55 @@ body { font-family: 'SageText', 'Inter', -apple-system, sans-serif; background: 
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════════════════════════════════
+     Tab: Competitor Intel
+     ══════════════════════════════════════════════════════════════════════════ -->
+<div class="tab" id="tab-i">
+  <div class="ph">
+    <h2>Competitor <span>Intel</span></h2>
+    <p>Live competitive intelligence on SAP SuccessFactors. Auto-refreshed weekly.</p>
+  </div>
+
+  <div class="ci-header">
+    <div class="ci-comp-tabs">
+      <button class="ci-comp-tab on" onclick="setCiComp('SAP SuccessFactors')">SAP SuccessFactors</button>
+    </div>
+    <div class="ci-meta">
+      <span class="ci-swept" id="ci-swept-label"></span>
+      <button class="ci-refresh-btn" id="ci-refresh-btn" onclick="startCiSweep()">⟳ Refresh Now</button>
+    </div>
+  </div>
+
+  <div id="ci-loading" style="display:none">
+    <div class="loading-wrap">
+      <div class="loading-spinner"></div>
+      <div class="loading-step" id="ci-load-step">Starting sweep…</div>
+      <div class="loading-sub">This takes about 30 seconds per competitor</div>
+    </div>
+  </div>
+
+  <div id="ci-content">
+    <div style="text-align:center;padding:60px 20px">
+      <div class="ci-empty-ico">🔍</div>
+      <div class="empty-t">Loading competitor data…</div>
+      <div class="empty-d" style="margin-top:6px">Fetching from knowledge base</div>
+    </div>
+  </div>
+</div>
+
 </div><!-- end .main -->
 
 <script>
 // ── Tab switching ───────────────────────────────────────────────────────────
 let _csLoaded = false;
+let _ciLoaded = false;
 function switchTab(key) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
   document.querySelectorAll('.s-item').forEach(n => n.classList.remove('active'));
   document.getElementById('tab-' + key).classList.add('on');
   document.getElementById('nav-' + key).classList.add('active');
   if (key === 'c' && !_csLoaded) { _csLoaded = true; loadAllCaseStudies(); }
+  if (key === 'i' && !_ciLoaded) { _ciLoaded = true; loadCompetitorIntel(); }
 }
 
 // ── Chip helpers ────────────────────────────────────────────────────────────
@@ -436,10 +540,14 @@ function doSearch() {
       `<span class="src-pill"><span class="src-dot"></span>${esc(s.file_name.replace(/\.pdf$/i,''))}</span>`
     ).join('');
 
+    const rendered = renderAnswer(data.answer);
+    const wordCount = data.answer.split(/\s+/).length;
+    const collapsible = wordCount > 120;
     area.innerHTML = `
       <div class="ans">
         <div class="ans-label"><span class="pulse-dot"></span> AI-Generated Answer</div>
-        <div class="ans-text">${renderAnswer(data.answer)}</div>
+        <div class="ans-text${collapsible ? ' ans-collapsed' : ''}" id="ans-body">${rendered}</div>
+        ${collapsible ? `<button class="ans-more-btn" onclick="toggleAnsExpand(this)">Show more detail ↓</button>` : ''}
         ${pills ? `<div class="ans-sources">${pills}</div>` : ''}
       </div>`;
   })
@@ -462,27 +570,47 @@ function renderAnswer(text) {
     return s
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
       .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
-      .replace(/\[(\d+)\]/g,'<sup>[$1]</sup>');
+      .replace(/\*([^*]+)\*/g,'<em>$1</em>')
+      .replace(/\[\d+\]\s*\((?:internal|public)\)/g,'')
+      .replace(/\[\d+\]/g,'');
   }
 
   for (const raw of lines) {
     const line = raw.trimEnd();
+    // Strip horizontal rules
+    if (/^[-*_]{3,}$/.test(line.trim())) continue;
+    // Strip markdown headers — render text only, as a paragraph
+    const header = line.match(/^#{1,6}\s+(.*)/);
+    if (header) { flushList(); out.push(`<p><strong>${fmt(header[1])}</strong></p>`); continue; }
+    // Strip blockquote markers
+    const bq = line.match(/^>\s*(.*)/);
+    if (bq) { flushList(); if (bq[1].trim()) out.push(`<p>${fmt(bq[1])}</p>`); continue; }
+    // Lists
     const bullet   = line.match(/^[-•*]\s+(.*)/);
     const numbered = line.match(/^\d+\.\s+(.*)/);
-    if (bullet)   { if (listType==='ol') flushList(); listType='ul'; listBuf.push(fmt(bullet[1])); }
+    if (bullet)        { if (listType==='ol') flushList(); listType='ul'; listBuf.push(fmt(bullet[1])); }
     else if (numbered) { if (listType==='ul') flushList(); listType='ol'; listBuf.push(fmt(numbered[1])); }
-    else { flushList(); if (line.trim()) out.push(`<p>${fmt(line)}</p>`); }
+    else               { flushList(); if (line.trim()) out.push(`<p>${fmt(line)}</p>`); }
   }
   flushList();
   return out.join('');
 }
 
+function toggleAnsExpand(btn) {
+  const body = document.getElementById('ans-body');
+  const expanded = !body.classList.contains('ans-collapsed');
+  body.classList.toggle('ans-collapsed', expanded);
+  btn.textContent = expanded ? 'Show more detail ↓' : 'Show less ↑';
+}
+
 // ── Case Studies ────────────────────────────────────────────────────────────
 let _csProduct = '', _csSegment = '';
 
+let _csSizeBand = '';
 initChips('cs-chips', chip => {
-  _csProduct = chip.dataset.product || '';
-  _csSegment = chip.dataset.segment || '';
+  _csProduct  = chip.dataset.product || '';
+  _csSegment  = chip.dataset.segment || '';
+  _csSizeBand = chip.dataset.size   || '';
   searchCaseStudies();
 });
 
@@ -508,7 +636,7 @@ function searchCaseStudies() {
   fetch('/api/case-studies', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, product: _csProduct || null, segment: _csSegment || null })
+    body: JSON.stringify({ query, product: _csProduct || null, segment: _csSegment || null, size_band: _csSizeBand || null })
   })
   .then(r => r.json())
   .then(data => renderCaseStudies(data.results || [], area))
@@ -833,6 +961,169 @@ function exportPDF() {
     html2canvas: { scale: 2, useCORS: true },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   }).from(el).save();
+}
+
+// ── Competitor Intel ─────────────────────────────────────────────────────────
+let _ciData = null;
+let _ciComp = 'SAP SuccessFactors';
+let _ciPollTimer = null;
+
+function loadCompetitorIntel() {
+  fetch('/api/competitor-intel')
+    .then(r => r.json())
+    .then(data => {
+      if (data.competitors && data.competitors.length > 0) {
+        _ciData = data.competitors;
+        renderCiCompetitor(_ciComp);
+      } else {
+        document.getElementById('ci-content').innerHTML = `
+          <div style="text-align:center;padding:60px 20px">
+            <div class="ci-empty-ico">📡</div>
+            <div class="empty-t">No data yet</div>
+            <div class="empty-d" style="margin-top:6px">Click "Refresh Now" to run the first competitor sweep</div>
+          </div>`;
+      }
+    })
+    .catch(() => {
+      document.getElementById('ci-content').innerHTML = `<div class="ci-error">Failed to load competitor data.</div>`;
+    });
+}
+
+function setCiComp(name) {
+  _ciComp = name;
+  document.querySelectorAll('.ci-comp-tab').forEach(t => {
+    t.classList.toggle('on', t.textContent.trim() === name);
+  });
+  if (_ciData) renderCiCompetitor(name);
+}
+
+function renderCiCompetitor(name) {
+  const comp = (_ciData || []).find(c => c.name === name);
+  const el = document.getElementById('ci-content');
+  if (!comp) {
+    el.innerHTML = `<div style="text-align:center;padding:60px 20px"><div class="ci-empty-ico">❓</div><div class="empty-t">No data for ${esc(name)}</div></div>`;
+    return;
+  }
+  if (comp.error) {
+    el.innerHTML = `<div class="ci-error">Sweep error for ${esc(name)}: ${esc(comp.error)}</div>`;
+    return;
+  }
+
+  const swept = document.getElementById('ci-swept-label');
+  if (swept && comp.swept_at) swept.textContent = `Updated ${comp.swept_at}`;
+
+  const trend = (comp.sentiment_trend || 'stable').toLowerCase();
+  const sentimentHtml = `<span class="ci-sentiment ${trend}">${trend}</span>`;
+
+  const fm = comp.feature_matrix || {};
+  const fmRows = [
+    ['Salesforce native', fm.salesforce_native],
+    ['Payroll included',  fm.payroll_included],
+    ['Mid-market focus',  fm.mid_market_focus],
+    ['Global payroll',    fm.global_payroll],
+    ['AI features',       fm.ai_features],
+    ['Implementation',    fm.implementation_weeks],
+    ['Pricing model',     fm.pricing_model],
+  ].map(([label, val]) => {
+    let cell;
+    if (val === true)  cell = `<span class="ci-yes">✓ Yes</span>`;
+    else if (val === false) cell = `<span class="ci-no">✗ No</span>`;
+    else cell = esc(val || '—');
+    return `<tr><td>${esc(label)}</td><td>${cell}</td></tr>`;
+  }).join('');
+
+  const newsHtml = (comp.recent_news || []).map(n => `
+    <div class="ci-news-item">
+      <div class="ci-news-date">${esc(n.date || '')}</div>
+      <div class="ci-news-body">
+        <div class="ci-news-headline">${esc(n.headline)}</div>
+        <div class="ci-news-impl">${esc(n.implication)}</div>
+      </div>
+    </div>`).join('');
+
+  const gapsHtml = (comp.gap_alerts || []).length === 0
+    ? `<div class="empty-d" style="padding:12px 0">No major gap alerts at this time.</div>`
+    : (comp.gap_alerts || []).map(g => `
+      <div class="ci-gap ${esc(g.severity)}">
+        <div class="ci-gap-top">
+          <span class="ci-gap-severity">${esc(g.severity)}</span>
+          <span class="ci-gap-type">${esc(g.type)}</span>
+        </div>
+        <div class="ci-gap-detail">${esc(g.detail)}</div>
+        <div class="ci-gap-talk">${esc(g.talk_track)}</div>
+      </div>`).join('');
+
+  el.innerHTML = `
+    <div class="ci-status-bar">
+      ${sentimentHtml}
+      <div class="ci-status-line">${esc(comp.status_line || '')}</div>
+    </div>
+    <div class="ci-overview">${esc(comp.overview || '')}</div>
+
+    <div class="ci-section-title">Change Feed</div>
+    <div class="ci-news">${newsHtml || '<div class="empty-d">No recent news found.</div>'}</div>
+
+    <div class="ci-section-title">Feature Matrix</div>
+    <table class="ci-matrix">
+      <thead><tr><th>Feature</th><th>${esc(name)}</th></tr></thead>
+      <tbody>${fmRows}</tbody>
+    </table>
+
+    <div class="ci-section-title">Messaging &amp; Weaknesses</div>
+    <div class="ci-two-col-ci">
+      <div class="ci-card">
+        <div class="ci-card-title">How they position themselves</div>
+        <ul class="ci-msg-list">${li(comp.messaging_angles)}</ul>
+      </div>
+      <div class="ci-card">
+        <div class="ci-card-title">Known weaknesses</div>
+        <ul class="ci-msg-list ci-weak-list">${li(comp.known_weaknesses)}</ul>
+      </div>
+    </div>
+
+    <div class="ci-section-title">Gap Alerts</div>
+    <div class="ci-gaps">${gapsHtml}</div>
+  `;
+}
+
+function startCiSweep() {
+  const btn = document.getElementById('ci-refresh-btn');
+  btn.disabled = true;
+  document.getElementById('ci-loading').style.display = 'block';
+  document.getElementById('ci-content').style.display = 'none';
+  fetch('/api/competitor-sweep', { method: 'POST' })
+    .then(r => r.json())
+    .then(data => pollCiSweep(data.job_id))
+    .catch(() => {
+      document.getElementById('ci-loading').style.display = 'none';
+      document.getElementById('ci-content').style.display = 'block';
+      document.getElementById('ci-content').innerHTML = `<div class="ci-error">Failed to start sweep.</div>`;
+      btn.disabled = false;
+    });
+}
+
+function pollCiSweep(jobId) {
+  _ciPollTimer = setInterval(() => {
+    fetch(`/api/competitor-sweep/status/${jobId}`)
+      .then(r => r.json())
+      .then(job => {
+        if (job.step) document.getElementById('ci-load-step').textContent = job.step;
+        if (job.status === 'done') {
+          clearInterval(_ciPollTimer);
+          _ciData = job.result;
+          document.getElementById('ci-loading').style.display = 'none';
+          document.getElementById('ci-content').style.display = 'block';
+          document.getElementById('ci-refresh-btn').disabled = false;
+          renderCiCompetitor(_ciComp);
+        } else if (job.status === 'error') {
+          clearInterval(_ciPollTimer);
+          document.getElementById('ci-loading').style.display = 'none';
+          document.getElementById('ci-content').style.display = 'block';
+          document.getElementById('ci-content').innerHTML = `<div class="ci-error">Sweep failed: ${esc(job.error)}</div>`;
+          document.getElementById('ci-refresh-btn').disabled = false;
+        }
+      });
+  }, 3000);
 }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
