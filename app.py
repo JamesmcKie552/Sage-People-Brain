@@ -217,11 +217,21 @@ def ask():
     if segment:
         pinecone_filter["segment"] = {"$in": [segment, "all"]}
 
+    query_embedding = get_embedding(query)
     matches = vs.search(
-        query_embedding=get_embedding(query),
-        top_k=8,
+        query_embedding=query_embedding,
+        top_k=12,
         filter=pinecone_filter if pinecone_filter else None,
     )
+
+    # Always supplement with up to 2 report chunks (Forrester, TEI) if not already present
+    if not doc_type or doc_type == "report":
+        report_filter = {"doc_type": {"$eq": "report"}}
+        if segment:
+            report_filter = {"$and": [report_filter, {"segment": {"$in": [segment, "all"]}}]}
+        report_matches = vs.search(query_embedding=query_embedding, top_k=2, filter=report_filter)
+        existing_ids = {m.id for m in matches}
+        matches = list(matches) + [m for m in report_matches if m.id not in existing_ids]
 
     if not matches:
         return jsonify({
@@ -425,8 +435,14 @@ def _run_battlecard(job_id: str, competitor: str, persona: str = ""):
             top_k=5,
             filter={"doc_type": {"$eq": "product"}},
         )
+        # Pull report docs — Forrester stats, TEI ROI data, market research
+        report_chunks = vs.search(
+            query_embedding=get_embedding(f"ROI business case cost savings efficiency HR admin reduction Sage People {persona_q}"),
+            top_k=4,
+            filter={"doc_type": {"$eq": "report"}},
+        )
 
-        all_chunks = list(competitor_chunks) + list(messaging_chunks) + list(case_study_chunks) + list(icp_chunks) + list(product_chunks)
+        all_chunks = list(competitor_chunks) + list(messaging_chunks) + list(case_study_chunks) + list(icp_chunks) + list(product_chunks) + list(report_chunks)
         source_files = sorted({
             (m.metadata or {}).get("file_name", "")
             for m in all_chunks
